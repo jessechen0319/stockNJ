@@ -20,4 +20,13 @@ router.get('/getProcessRate', function(req, res, next) {
 });
 
 
+router.get('/getProcessRate', function(req, res, next) {
+
+	var processRate = stockNameService.getProcessRate();
+	res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ "processRate": processRate }));
+    res.end();
+});
+
+
 module.exports = router;
