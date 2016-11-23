@@ -7,6 +7,8 @@ function StockService(){
 	var totalStockes = 99999*3;
 
 	var currentStockIndex = 0;
+	var stocks = {};
+
 
 	var Util = (function(){
 
@@ -20,14 +22,25 @@ function StockService(){
 
 			var listInformation = body.split("=");
 			var arrayListStr = listInformation[1];
+			var stockCode = listInformation[0].slice(listInformation[0].length - 6, listInformation[0].length);
 			arrayListStr = arrayListStr.slice(1,arrayListStr.length-2);
 			var arrayListInfo = arrayListStr.split(",");
 			
 			if(arrayListInfo.length == 1){
+				currentStockIndex++;
 				console.log('stock information is not available');
 			} else {
-				console.log('stock information is available');
-				console.log(arrayListInfo.length);
+				currentStockIndex++;
+				var analysisObject = {'stockCode': stockCode};
+				analysisObject.beginPrice = arrayListInfo[1];
+				analysisObject.lastDayPrice = arrayListInfo[2];
+				analysisObject.price = arrayListInfo[3];
+				analysisObject.topPrice = arrayListInfo[4];
+				analysisObject.lowPrice = arrayListInfo[5];
+				analysisObject.amountStock = arrayListInfo[8];
+				analysisObject.amountMoney = arrayListInfo[9];
+				analysisObject.date = arrayListInfo[30];
+				stocks.content.push(analysisObject);
 			}
 		}
 
@@ -68,7 +81,31 @@ function StockService(){
 			var partialCode = Util.pad(i, 5);
 			var URL = `/list=sh6${partialCode}`;
 			paths.push(URL);
-			currentStockIndex++;
+			
+		}
+		Util.checkIfExsitAndGetInformation({host:host, paths:paths});
+	}
+
+	function _CZNames(){
+
+		var host = 'hq.sinajs.cn';
+		var paths = [];
+		for (var i = 0; i < 100000; i++) {
+			var partialCode = Util.pad(i, 5);
+			var URL = `/list=sz0${partialCode}`;
+			paths.push(URL);
+		}
+		Util.checkIfExsitAndGetInformation({host:host, paths:paths});
+	}
+
+	function _CYBNames(){
+
+		var host = 'hq.sinajs.cn';
+		var paths = [];
+		for (var i = 0; i < 100000; i++) {
+			var partialCode = Util.pad(i, 5);
+			var URL = `/list=sz3${partialCode}`;
+			paths.push(URL);
 		}
 		Util.checkIfExsitAndGetInformation({host:host, paths:paths});
 	}
@@ -76,7 +113,26 @@ function StockService(){
 	
 
 	var fetchAllNames = function(){
-		_SZNames();
+		
+		var nowDate = new Date();
+		var day = nowDate.getDay();
+		//if it is Sat. Sun. do not do any thing.
+		if(day == 0 || day == 6){
+			return;
+		} else {
+			var dayInMonth = nowDate.getDate();
+			var month = nowDate.getMonth();
+			var year = nowDate.getFullYear();
+			var dateFormate = `$(year)-$(month)-$(dayInMonth)`;
+			stocks = {};
+			stocks.content = [];
+			currentStockIndex = 0;
+			stocks.trackDate = dateFormate;
+			_SZNames();
+			_CZNames();
+			_CYBNames();
+		}
+		
 	};
 
 	var getProcessRate = function(){
@@ -87,7 +143,8 @@ function StockService(){
 
 	return {
 		"fetchAllNames": fetchAllNames,
-		"getProcessRate": getProcessRate
+		"getProcessRate": getProcessRate,
+		"stocks": stocks
 	};
 }
 

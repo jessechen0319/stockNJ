@@ -7,6 +7,7 @@ var options = {
     };
 
 http.get(options, function(response) {
+  response.setEncoding('utf8');
   var body = "";
   response.on("data", function(data) {
       body += data;
