@@ -87,3 +87,5 @@ var hash = crypto.createHmac('sha1', 'whKn5xb8VgiYDxY5UileQ3WovrbAZnpg').update(
 console.log(hash);
 var finalKey = new Buffer(hash+remoteOrigin).toString('base64');
 console.log(finalKey);
+
+
