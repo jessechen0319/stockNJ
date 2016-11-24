@@ -79,13 +79,20 @@ console.log(qs);*/
 // req.write(postData);
 // req.end();
 
-var crypto = require('crypto');
+/*var crypto = require('crypto');
 var now = new Date();
 var seconds = now.getTime();
 var remoteOrigin = `a=10068897&b=jesse&k=AKIDX0JRPRyTNCsUBlJvGZionbP6czCELy53&e=7776000&t=${seconds}&r=0303030303&f=`;
 var hash = crypto.createHmac('sha1', 'whKn5xb8VgiYDxY5UileQ3WovrbAZnpg').update(remoteOrigin).digest('hex');
 console.log(hash);
 var finalKey = new Buffer(hash+remoteOrigin).toString('base64');
-console.log(finalKey);
+console.log(finalKey);*/
+
+var qcloud = require('qcloud_cos');
+// console.log(qcloud.conf.setAppInfo.toString());
+qcloud.conf.setAppInfo('10068897','AKIDX0JRPRyTNCsUBlJvGZionbP6czCELy53','whKn5xb8VgiYDxY5UileQ3WovrbAZnpg'); 
+// console.log(qcloud.auth.signOnce.toString());
+var sign  = qcloud.auth.signOnce('jesse',         '/10068897/jesse/db.json');
+console.log(sign);
 
 
