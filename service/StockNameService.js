@@ -189,7 +189,7 @@ function StockService(){
 		var def = deferred();
 		
 		for (var i = 0; i < 10000; i++) {
-			var partialCode = Util.pad(i, 5);
+			var partialCode = Util.pad(i, 4);
 			var URL = `/list=sh60${partialCode}`;
 			paths.push(URL);
 			if(i==99999){
@@ -206,7 +206,7 @@ function StockService(){
 		var def = deferred();
 		
 		for (var i = 0; i < 10000; i++) {
-			var partialCode = Util.pad(i, 5);
+			var partialCode = Util.pad(i, 4);
 			var URL = `/list=sz00${partialCode}`;
 			paths.push(URL);
 			if(i==99999){
@@ -221,7 +221,7 @@ function StockService(){
 		var def = deferred();
 		
 		for (var i = 0; i < 10000; i++) {
-			var partialCode = Util.pad(i, 5);
+			var partialCode = Util.pad(i, 4);
 			var URL = `/list=sz30${partialCode}`;
 			paths.push(URL);
 			if(i==99999){
