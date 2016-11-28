@@ -1,6 +1,7 @@
 
 var http = require('http');
 var deferred = require('deferred');
+var dbService = require("../service/DBService");
 
 function StockService(){
 
