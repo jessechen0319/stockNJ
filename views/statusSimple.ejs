@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Easy get</title>
+	<script src="/js/loadjs.min.js"></script>
+	<script>
+		loadjs(['/js/angular.min.js', '/js/data.service.js', '/js/viewStatus.js'], 'status_simple');
+	</script>
+</head>
+<body ng-app="stock" ng-controller="ViewStatus">
+	<input type="button" value="trigger" ng-click="triggerFetch()">
+</body>
+</html>

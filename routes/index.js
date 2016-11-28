@@ -11,6 +11,8 @@ router.get('/', function(req, res, next) {
 	res.render('index', { title: 'Express' });
 });
 
+
+
 router.get('/getProcessRate', function(req, res, next) {
 
 	var processRate = stockNameService.getProcessRate();
@@ -20,7 +22,7 @@ router.get('/getProcessRate', function(req, res, next) {
 });
 
 
-router.get('/fetchAllStockData', function(req, res, next) {
+router.get('/fetchAllStockDataName', function(req, res, next) {
 
 	stockNameService.fetchAllNames();
 	res.setHeader('Content-Type', 'application/json');
@@ -31,7 +33,7 @@ router.get('/fetchAllStockData', function(req, res, next) {
 router.get('/storeToDB', function(req, res, next) {
 
 	var stocks = stockNameService.stocks;
-	if (stocks == {}||!stocks.trackDate||stockNameService.getProcessRate()!='100.00'){
+	if (stocks == {}||!stocks.trackDate||stockNameService.getProcessRate()!='100.00'||stockNameService.getProcessRate()!='0.00'){
 		res.setHeader('Content-Type', 'application/json');
 	    res.send(JSON.stringify({ "status": 'NODATA' }));
 	    res.end();
@@ -68,6 +70,10 @@ router.get('/storeToDB', function(req, res, next) {
 		});
 	}
 	
+});
+
+router.get('/viewStatus', function(req, res, next) {
+	res.render('statusSimple', { title: 'Express' });
 });
 
 

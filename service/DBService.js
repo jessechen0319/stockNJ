@@ -18,7 +18,7 @@ var db = (function(){
 	}
 
 	return {'readDb':readDb,
-		'writeDb'：writeDb};
+		'writeDb':writeDb};
 })();
 
 module.exports = db;

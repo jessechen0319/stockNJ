@@ -1,14 +1,16 @@
 
 var http = require('http');
+var deferred = require('deferred');
 
 function StockService(){
 
 
-	var totalStockes = 99999*3;
+	var totalStockes = 300000;
 
 	var currentStockIndex = 0;
 	var stocks = {};
-
+	var paths = [];
+	var host = 'hq.sinajs.cn';
 
 	var Util = (function(){
 
@@ -28,7 +30,6 @@ function StockService(){
 			
 			if(arrayListInfo.length == 1){
 				currentStockIndex++;
-				console.log('stock information is not available');
 			} else {
 				currentStockIndex++;
 				var analysisObject = {'stockCode': stockCode};
@@ -75,39 +76,49 @@ function StockService(){
 
 	function _SZNames(){
 
-		var host = 'hq.sinajs.cn';
-		var paths = [];
+		var def = deferred();
+		
 		for (var i = 0; i < 100000; i++) {
 			var partialCode = Util.pad(i, 5);
 			var URL = `/list=sh6${partialCode}`;
 			paths.push(URL);
-			
+			if(i==99999){
+				def.resolve();
+			}
+
 		}
-		Util.checkIfExsitAndGetInformation({host:host, paths:paths});
+		return def.promise();
+		
 	}
 
 	function _CZNames(){
 
-		var host = 'hq.sinajs.cn';
-		var paths = [];
+		var def = deferred();
+		
 		for (var i = 0; i < 100000; i++) {
 			var partialCode = Util.pad(i, 5);
 			var URL = `/list=sz0${partialCode}`;
 			paths.push(URL);
+			if(i==99999){
+				def.resolve();
+			}
 		}
-		Util.checkIfExsitAndGetInformation({host:host, paths:paths});
+		return def.promise();
 	}
 
 	function _CYBNames(){
 
-		var host = 'hq.sinajs.cn';
-		var paths = [];
+		var def = deferred();
+		
 		for (var i = 0; i < 100000; i++) {
 			var partialCode = Util.pad(i, 5);
 			var URL = `/list=sz3${partialCode}`;
 			paths.push(URL);
+			if(i==99999){
+				def.resolve();
+			}
 		}
-		Util.checkIfExsitAndGetInformation({host:host, paths:paths});
+		return def.promise();
 	}
 
 	
@@ -126,11 +137,18 @@ function StockService(){
 			var dateFormate = `$(year)-$(month)-$(dayInMonth)`;
 			stocks = {};
 			stocks.content = [];
+			paths = [];
 			currentStockIndex = 0;
 			stocks.trackDate = dateFormate;
-			_SZNames();
-			_CZNames();
-			_CYBNames();
+			_SZNames().then(function(){
+				_CZNames().then(function(){
+					_CYBNames().then(function(){
+						var lengthPaths = paths.length;
+						console.log(`generate code finished, length = ${lengthPaths}`);
+						Util.checkIfExsitAndGetInformation({host:host, paths:paths});
+					});
+				});
+			});
 		}
 		
 	};
