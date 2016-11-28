@@ -153,6 +153,7 @@ function StockService(){
 
 			var that = this;
 			var pathV = paths.shift();
+			console.log(pathV);
 			var options = {
 			      host: host,
 			      port: 80,
@@ -192,7 +193,7 @@ function StockService(){
 			var partialCode = Util.pad(i, 4);
 			var URL = `/list=sh60${partialCode}`;
 			paths.push(URL);
-			if(i==99999){
+			if(i==9999){
 				def.resolve();
 			}
 
@@ -209,7 +210,7 @@ function StockService(){
 			var partialCode = Util.pad(i, 4);
 			var URL = `/list=sz00${partialCode}`;
 			paths.push(URL);
-			if(i==99999){
+			if(i==9999){
 				def.resolve();
 			}
 		}
@@ -224,7 +225,7 @@ function StockService(){
 			var partialCode = Util.pad(i, 4);
 			var URL = `/list=sz30${partialCode}`;
 			paths.push(URL);
-			if(i==99999){
+			if(i==9999){
 				def.resolve();
 			}
 		}
@@ -269,9 +270,13 @@ function StockService(){
 			availableStockNames = [];
 			paths = [];
 			currentStockIndex = 0;
+			console.log(`jesse1`);
 			_SZNames().then(function(){
+				console.log(`jesse2`);
 				_CZNames().then(function(){
+					console.log(`jesse3`);
 					_CYBNames().then(function(){
+						console.log(`jesse4`);
 						var lengthPaths = paths.length;
 						console.log(`generate code finished, length = ${lengthPaths}`);
 						Util.checkEixst({host:host, paths:paths});
