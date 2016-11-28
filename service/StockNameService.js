@@ -5,7 +5,7 @@ var deferred = require('deferred');
 function StockService(){
 
 
-	var totalStockes = 300000;
+	var totalStockes = 30000;
 
 	var currentStockIndex = 0;
 	var stocks = {};
@@ -188,9 +188,9 @@ function StockService(){
 
 		var def = deferred();
 		
-		for (var i = 0; i < 100000; i++) {
+		for (var i = 0; i < 10000; i++) {
 			var partialCode = Util.pad(i, 5);
-			var URL = `/list=sh6${partialCode}`;
+			var URL = `/list=sh60${partialCode}`;
 			paths.push(URL);
 			if(i==99999){
 				def.resolve();
@@ -205,9 +205,9 @@ function StockService(){
 
 		var def = deferred();
 		
-		for (var i = 0; i < 100000; i++) {
+		for (var i = 0; i < 10000; i++) {
 			var partialCode = Util.pad(i, 5);
-			var URL = `/list=sz0${partialCode}`;
+			var URL = `/list=sz00${partialCode}`;
 			paths.push(URL);
 			if(i==99999){
 				def.resolve();
@@ -220,9 +220,9 @@ function StockService(){
 
 		var def = deferred();
 		
-		for (var i = 0; i < 100000; i++) {
+		for (var i = 0; i < 10000; i++) {
 			var partialCode = Util.pad(i, 5);
-			var URL = `/list=sz3${partialCode}`;
+			var URL = `/list=sz30${partialCode}`;
 			paths.push(URL);
 			if(i==99999){
 				def.resolve();
