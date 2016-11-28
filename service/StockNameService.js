@@ -11,6 +11,8 @@ function StockService(){
 	var stocks = {};
 	var paths = [];
 	var host = 'hq.sinajs.cn';
+	var availableStockNames = [];
+	var totalAvailabeNumber = 1;
 
 	var Util = (function(){
 
@@ -20,7 +22,61 @@ function StockService(){
 			return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 		}
 
+		function _storeNames({names}){
+			dbService.readDb(function(err, db){
+
+				if(!db.stockNames){
+					db.stockNames = [];
+				}
+				db.stockNames = availableStockNames;
+
+				dbService.writeDb(db, function(err){
+					if(err){
+						console.log('store failed');
+					} else {
+						console.log('store successfully');
+					}
+				});
+
+			});
+		}
+
 		function _analysisData({body}){
+
+			var listInformation = body.split("=");
+			var arrayListStr = listInformation[1];
+			var stockCode = listInformation[0].slice(listInformation[0].length - 6, listInformation[0].length);
+			arrayListStr = arrayListStr.slice(1,arrayListStr.length-2);
+			var arrayListInfo = arrayListStr.split(",");
+			currentStockIndex++;
+			if(arrayListInfo.length != 1){
+				console.log(`available stock with index : ${currentStockIndex}, the code is ${stockCode}`);
+				availableStockNames.push(stockCode);
+			}
+		}
+
+		function _storeExtractedStockFunction(){
+
+			dbService.readDb(function(err, db){
+
+				if(db[stocks.trackDate]){
+					return;
+				}
+
+				db[stocks.trackDate] = stocks.content;
+
+				dbService.writeDb(db, function(err){
+					if(err){
+						console.log('store failed');
+					} else {
+						console.log('store successfully');
+					}
+				});
+
+			});
+		}
+
+		function _analysisDataDetailInfo({body}){
 
 			var listInformation = body.split("=");
 			var arrayListStr = listInformation[1];
@@ -32,6 +88,8 @@ function StockService(){
 				currentStockIndex++;
 			} else {
 				currentStockIndex++;
+				if(paths.length == 0){
+				}
 				var analysisObject = {'stockCode': stockCode};
 				analysisObject.beginPrice = arrayListInfo[1];
 				analysisObject.lastDayPrice = arrayListInfo[2];
@@ -45,7 +103,53 @@ function StockService(){
 			}
 		}
 
-		function checkIfExsitAndGetInformation({host, paths}){
+		function analysisDataDetail(){
+			dbService.readDb(function(err, db){
+				var availableNames = db.stockNames;
+				if(!availableNames || availableNames.length == 0) {
+					return;
+				} else {
+					totalAvailabeNumber = availableNames.length;
+					var stockName = availableNames.shift();
+					if(!stockName){
+						//finished extract, store data
+						return;
+					}
+
+					var started = stockName.substr(0, 1);
+					var title = '';
+
+					switch(started){
+						case '6':
+							title = 'sh';
+						default:
+							title = 'sz';
+					}
+
+					var extractPath = `/list=${title}${stockName}`;
+
+					var options = {
+				      host: host,
+				      port: 80,
+				      path: extractPath
+				    };
+
+				    http.get(options, function(response) {
+				      var body = "";
+				      response.on("data", function(data) {
+				          body += data;
+				      });
+				      response.on("end", function() {
+				      	_analysisDataDetailInfo({body:body});
+				      	analysisDataDetail();
+				      });
+				    });
+
+				}
+			});
+		}
+
+		function checkEixst({host, paths}){
 
 			var that = this;
 			var pathV = paths.shift();
@@ -54,6 +158,11 @@ function StockService(){
 			      port: 80,
 			      path: pathV
 			    };
+			if(!pathV){
+				//finished extract, store data
+				_storeNames(availableStockNames);
+				return;
+			}
 
 			http.get(options, function(response) {
 			  var body = "";
@@ -62,7 +171,7 @@ function StockService(){
 			  });
 			  response.on("end", function() {
 			  	_analysisData({body:body});
-			    checkIfExsitAndGetInformation({host:host, paths:paths});
+			    checkEixst({host:host, paths:paths});
 			  });
 			});
 
@@ -70,7 +179,8 @@ function StockService(){
 
 		return {
 			"pad": pad,
-			"checkIfExsitAndGetInformation": checkIfExsitAndGetInformation
+			"checkEixst": checkEixst,
+			"analysisDataDetail": analysisDataDetail
 		};
 	})();
 
@@ -121,6 +231,27 @@ function StockService(){
 		return def.promise();
 	}
 
+	var getStockInformation = function(){
+
+		var nowDate = new Date();
+		var dayInMonth = nowDate.getDate();
+		var month = nowDate.getMonth();
+		var year = nowDate.getFullYear();
+		var dateFormate = `$(year)-$(month)-$(dayInMonth)`;
+		stocks = {};
+		stocks.content = [];
+		stocks.trackDate = dateFormate;
+		currentStockIndex = 0;
+		Util.analysisDataDetail();
+	};
+
+	var getDetailProcessRate = function(){
+
+		var processRate = (currentStockIndex/totalStockes)*100;
+		processRate = processRate.toFixed(2);
+		return processRate;
+	};
+
 	
 
 	var fetchAllNames = function(){
@@ -135,17 +266,15 @@ function StockService(){
 			var month = nowDate.getMonth();
 			var year = nowDate.getFullYear();
 			var dateFormate = `$(year)-$(month)-$(dayInMonth)`;
-			stocks = {};
-			stocks.content = [];
+			availableStockNames = [];
 			paths = [];
 			currentStockIndex = 0;
-			stocks.trackDate = dateFormate;
 			_SZNames().then(function(){
 				_CZNames().then(function(){
 					_CYBNames().then(function(){
 						var lengthPaths = paths.length;
 						console.log(`generate code finished, length = ${lengthPaths}`);
-						Util.checkIfExsitAndGetInformation({host:host, paths:paths});
+						Util.checkEixst({host:host, paths:paths});
 					});
 				});
 			});
@@ -162,7 +291,9 @@ function StockService(){
 	return {
 		"fetchAllNames": fetchAllNames,
 		"getProcessRate": getProcessRate,
-		"stocks": stocks
+		"stocks": stocks,
+		"getStockInformation": getStockInformation,
+		"getDetailProcessRate": getDetailProcessRate
 	};
 }
 
