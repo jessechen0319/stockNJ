@@ -11,14 +11,22 @@ router.get('/', function(req, res, next) {
 	res.render('index', { title: 'Express' });
 });
 
-
-
 router.get('/getProcessRate', function(req, res, next) {
 
 	var processRate = stockNameService.getProcessRate();
 	res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({ "processRate": processRate }));
     res.end();
+});
+
+router.get('/getDetailProcessRate', function(req, res, next) {
+
+	var processRate = stockNameService.getDetailProcessRate(function(rate){
+		
+		res.setHeader('Content-Type', 'application/json');
+	    res.send(JSON.stringify({ "processRate": rate }));
+	    res.end();
+	});
 });
 
 

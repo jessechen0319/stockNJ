@@ -111,40 +111,48 @@ function StockService(){
 					return;
 				} else {
 					totalAvailabeNumber = availableNames.length;
-					var stockName = availableNames.shift();
-					if(!stockName){
-						//finished extract, store data
-						return;
+
+					function _innerAnalysis(){
+						var stockName = availableNames.shift();
+
+						if(!stockName){
+							//finished extract, store data
+							_storeExtractedStockFunction();
+							return;
+						}
+
+						var started = stockName.substr(0, 1);
+						var title = '';
+
+						switch(started){
+							case '6':
+								title = 'sh';
+							default:
+								title = 'sz';
+						}
+
+						var extractPath = `/list=${title}${stockName}`;
+						console.log(`${extractPath} -> stock remind ${availableNames.length}`);
+
+						var options = {
+					      host: host,
+					      port: 80,
+					      path: extractPath
+					    };
+
+					    http.get(options, function(response) {
+					      var body = "";
+					      response.on("data", function(data) {
+					          body += data;
+					      });
+					      response.on("end", function() {
+					      	_analysisDataDetailInfo({body:body});
+					      	_innerAnalysis();
+					      });
+					    });
 					}
 
-					var started = stockName.substr(0, 1);
-					var title = '';
-
-					switch(started){
-						case '6':
-							title = 'sh';
-						default:
-							title = 'sz';
-					}
-
-					var extractPath = `/list=${title}${stockName}`;
-
-					var options = {
-				      host: host,
-				      port: 80,
-				      path: extractPath
-				    };
-
-				    http.get(options, function(response) {
-				      var body = "";
-				      response.on("data", function(data) {
-				          body += data;
-				      });
-				      response.on("end", function() {
-				      	_analysisDataDetailInfo({body:body});
-				      	analysisDataDetail();
-				      });
-				    });
+					_innerAnalysis();
 
 				}
 			});
@@ -239,7 +247,7 @@ function StockService(){
 		var dayInMonth = nowDate.getDate();
 		var month = nowDate.getMonth();
 		var year = nowDate.getFullYear();
-		var dateFormate = `$(year)-$(month)-$(dayInMonth)`;
+		var dateFormate = `${year}-${month}-${dayInMonth}`;
 		stocks = {};
 		stocks.content = [];
 		stocks.trackDate = dateFormate;
@@ -247,11 +255,16 @@ function StockService(){
 		Util.analysisDataDetail();
 	};
 
-	var getDetailProcessRate = function(){
+	var getDetailProcessRate = function(callback){
 
-		var processRate = (currentStockIndex/totalStockes)*100;
-		processRate = processRate.toFixed(2);
-		return processRate;
+		dbService.readDb(function(err, db){
+			var stockNames = db.stockNames;
+			var stockNumber = stockNames.length;
+			var processRate = (currentStockIndex/stockNumber)*100;
+			processRate = processRate.toFixed(2);
+			callback(processRate);
+		});
+		
 	};
 
 	
