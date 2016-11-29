@@ -87,9 +87,7 @@ function StockService(){
 			var arrayListInfo = arrayListStr.split(",");
 			
 			if(arrayListInfo.length == 1){
-				currentStockInfoIndex++;
 			} else {
-				currentStockInfoIndex++;
 				if(paths.length == 0){
 				}
 				var analysisObject = {'stockCode': stockCode};
@@ -115,10 +113,10 @@ function StockService(){
 
 					function _innerAnalysis(){
 						var stockName = availableNames.shift();
+						currentStockInfoIndex++;
 
 						if(!stockName){
 							//finished extract, store data
-							_storeExtractedStockFunction();
 							return;
 						}
 
@@ -149,6 +147,10 @@ function StockService(){
 					      response.on("end", function() {
 					      	_analysisDataDetailInfo({body:body});
 					      	_innerAnalysis();
+					      	if(availableNames.length == 0){
+					      		console.log('store ----->  ');
+					      		_storeExtractedStockFunction();
+					      	}
 					      });
 					    });
 					}
