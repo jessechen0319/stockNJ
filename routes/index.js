@@ -29,6 +29,33 @@ router.get('/getDetailProcessRate', function(req, res, next) {
 	});
 });
 
+router.post('/checkFetchDates', function(req, res, next) {
+
+	if(req.body.dates){
+		var dates = req.body.dates;
+		var returnValue = [];
+		dbService.readDb(function(err, db){
+			dates.forEach(function(day){
+				var dayObj = {};
+				dayObj.date = day;
+				if(db[day]){
+					dayObj.valid = 'validate-success'
+				} else {
+					dayObj.valid = 'validate-fail'
+				}
+				returnValue.push(dayObj);
+			});
+			res.setHeader('Content-Type', 'application/json');
+		    res.send(JSON.stringify(returnValue));
+		    res.end();
+		});
+	} else {
+		res.setHeader('Content-Type', 'application/json');
+	    res.send(JSON.stringify({ "status": false }));
+	    res.end();
+	}
+});
+
 
 router.get('/fetchAllStockDataName', function(req, res, next) {
 

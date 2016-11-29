@@ -34,11 +34,17 @@ app.controller('index', function ($scope, $http) {
 		var dateTemp = new Date();
 		dateTemp.setDate(nowDate.getDate() - i);
 		var dayInMonth = dateTemp.getDate();
-		var month = dateTemp.getMonth();
+		var month = dateTemp.getMonth()+1;
 		var year = dateTemp.getFullYear();
 		var dateFormate = `${year}-${month}-${dayInMonth}`;
 		$scope.trackLastFiveDays.push(dateFormate);
 	}
-	
+
+	$http.post('/checkFetchDates', { 'dates': $scope.trackLastFiveDays }).then(function successCallback(response) {
+		console.log(response.data);
+		$scope.dateValidations = response.data;
+	}, function errorCallback(response) {
+	});
+
 	console.log($scope.trackLastFiveDays);
 });

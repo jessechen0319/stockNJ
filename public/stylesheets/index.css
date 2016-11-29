@@ -27,3 +27,20 @@
 .margin-header {
     margin-top: 100px;
 }
+
+.validate-fail {
+    background: #e04b4b;
+}
+
+.class-valid {
+    display: inline;
+    padding: 10px 20px;
+    line-height: 40px;
+    border: 1px solid grey;
+    border-radius: 5px;
+    color: #f8eaea;
+}
+
+.validate-success {
+    background: #2c962c;
+}
