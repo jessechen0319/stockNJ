@@ -247,7 +247,7 @@ function StockService(){
 
 		var nowDate = new Date();
 		var dayInMonth = nowDate.getDate();
-		var month = nowDate.getMonth();
+		var month = nowDate.getMonth()+1;
 		var year = nowDate.getFullYear();
 		var dateFormate = `${year}-${month}-${dayInMonth}`;
 		stocks = {};
@@ -262,7 +262,7 @@ function StockService(){
 		dbService.readDb(function(err, db){
 			var stockNames = db.stockNames;
 			var stockNumber = stockNames.length;
-			var processRate = (currentStockInfoIndex/stockNumber)*100;
+			var processRate = (currentStockInfoIndex/(stockNumber+1))*100;
 			processRate = processRate.toFixed(2);
 			callback(processRate);
 		});
@@ -280,7 +280,7 @@ function StockService(){
 			return;
 		} else {
 			var dayInMonth = nowDate.getDate();
-			var month = nowDate.getMonth();
+			var month = nowDate.getMonth()+1;
 			var year = nowDate.getFullYear();
 			var dateFormate = `$(year)-$(month)-$(dayInMonth)`;
 			availableStockNames = [];
