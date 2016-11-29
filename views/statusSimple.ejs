@@ -3,10 +3,10 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Easy get</title>
-	<script type="text/javascript" src="/js/angular.min.js"></script>
-	<script type="text/javascript" src="/js/viewStatus.js"></script>
+	
 </head>
 <body ng-app="stock" ng-controller="ViewStatus">
-	<input type="button" value="trigger" ng-click="triggerFetch()">
+	<%- include('header.ejs'); %>
 </body>
+<script type="text/javascript" src="/js/viewStatus.js"></script>
 </html>

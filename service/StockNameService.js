@@ -14,6 +14,7 @@ function StockService(){
 	var host = 'hq.sinajs.cn';
 	var availableStockNames = [];
 	var totalAvailabeNumber = 1;
+	var currentStockInfoIndex = 0;
 
 	var Util = (function(){
 
@@ -86,9 +87,9 @@ function StockService(){
 			var arrayListInfo = arrayListStr.split(",");
 			
 			if(arrayListInfo.length == 1){
-				currentStockIndex++;
+				currentStockInfoIndex++;
 			} else {
-				currentStockIndex++;
+				currentStockInfoIndex++;
 				if(paths.length == 0){
 				}
 				var analysisObject = {'stockCode': stockCode};
@@ -240,7 +241,6 @@ function StockService(){
 		}
 		return def.promise();
 	}
-
 	var getStockInformation = function(){
 
 		var nowDate = new Date();
@@ -251,7 +251,7 @@ function StockService(){
 		stocks = {};
 		stocks.content = [];
 		stocks.trackDate = dateFormate;
-		currentStockIndex = 0;
+		currentStockInfoIndex = 0;
 		Util.analysisDataDetail();
 	};
 
@@ -260,7 +260,7 @@ function StockService(){
 		dbService.readDb(function(err, db){
 			var stockNames = db.stockNames;
 			var stockNumber = stockNames.length;
-			var processRate = (currentStockIndex/stockNumber)*100;
+			var processRate = (currentStockInfoIndex/stockNumber)*100;
 			processRate = processRate.toFixed(2);
 			callback(processRate);
 		});

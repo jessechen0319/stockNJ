@@ -1,0 +1,29 @@
+.date-now {
+    display: inline-block;
+    position: absolute;
+    left: 20px;
+    line-height: 40px;
+    height: 60px;
+    padding: 10px 20px;
+    background: #f36880;
+    color: white;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.top-message {
+    display: inline-block;
+    position: absolute;
+    left: 250px;
+    line-height: 40px;
+    height: 60px;
+    padding: 10px 20px;
+    background: #f36880;
+    color: white;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.margin-header {
+    margin-top: 100px;
+}
