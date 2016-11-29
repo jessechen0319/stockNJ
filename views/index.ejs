@@ -5,14 +5,6 @@
 	<title>Stock</title>
 	<link href="/favicon.ico" rel="icon" type="image/x-icon" />
 	<link rel="stylesheet" href="/stylesheets/index.css">
-
-	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-sanitize.js"></script>
-    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.3.0.js"></script>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-
-
 </head>
 <body ng-controller="index">
 	<%- include('header.ejs'); %>
@@ -43,7 +35,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><div class="col-sm-4"><button class='btn' ng-click="fetchStockDetail()">Fetch Stock (daily)</button></td>
+					<td><div class="col-sm-4"><button class='btn' ng-disabled="disableFetchStockFlag" ng-click="fetchStockDetail()">Fetch Stock (daily)</button></td>
 					<td>
 						<div class="progress">
 						  <div class="progress-bar" role="progressbar" aria-valuenow="{{stockProcessPercentage}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{stockProcessPercentage}}%;">
