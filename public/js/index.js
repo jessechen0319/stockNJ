@@ -24,7 +24,7 @@ app.controller('index', function ($scope, $http, $rootScope) {
 
 		var todayFetchStatus;
 		$scope.dateValidations.forEach(function(item){
-			if (item.date == dateFormate) {
+			if (item.date == $scope.nowDate) {
 				todayFetchStatus = item;
 			}
 		});
