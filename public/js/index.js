@@ -3,7 +3,7 @@ var app = angular.module('stock', []);
 app.controller('index', function ($scope, $http, $rootScope) {
 	var nowDate = new Date();
 	var dayInMonth = nowDate.getDate();
-	var month = nowDate.getMonth();
+	var month = nowDate.getMonth()+1;
 	var year = nowDate.getFullYear();
 	var dateFormate = `${year}-${month}-${dayInMonth}`;
 	$scope.nowDate = dateFormate;
