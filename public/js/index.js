@@ -1,6 +1,6 @@
 var app = angular.module('stock', []);
 
-app.controller('index', function ($scope, $http) {
+app.controller('index', function ($scope, $http, $rootScope) {
 	var nowDate = new Date();
 	var dayInMonth = nowDate.getDate();
 	var month = nowDate.getMonth();
@@ -10,6 +10,25 @@ app.controller('index', function ($scope, $http) {
 	$scope.nameProcessPercentage = 0;
 	$scope.stockProcessPercentage = 0;
 	$scope.trackLastFiveDays = [];
+	$rootScope.errors = [];
+
+	$rootScope.clearThisError = function(message){
+
+		$rootScope.errors = $rootScope.errors.filter(function(item){
+		    return item != message
+		});
+	};
+
+	$scope.fetchStockDetail = function(){
+		$http({
+		  method: 'GET',
+		  url: '/storeStockToDB'
+		}).then(function successCallback(response) {
+			$rootScope.errors.push('The fetch is started');
+		}, function errorCallback(response) {
+			$rootScope.errors.push('The fetch is failed');
+		});
+	};
 	
 
 	setInterval(function(){
