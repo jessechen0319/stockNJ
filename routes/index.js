@@ -5,6 +5,8 @@ var dbService = require("../service/DBService");
 var StockNameService = require("../service/StockNameService");
 var stockNameService = new StockNameService();
 
+var StockAnalysisService = require("../service/StockAnalysisService");
+var stackAnalysisService = new StockAnalysisService();
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	
@@ -54,6 +56,21 @@ router.post('/checkFetchDates', function(req, res, next) {
 	    res.send(JSON.stringify({ "status": false }));
 	    res.end();
 	}
+});
+
+router.get('/canoonThree', function(req, res, next) {
+
+	stackAnalysisService.raiseCannonThree();
+	res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ "result": "triggered" }));
+    res.end();
+});
+
+router.get('/canoonThreeProcessing', function(req, res, next) {
+
+	res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ "result": stackAnalysisService.anaylysisResult.canoon.processing }));
+    res.end();
 });
 
 
