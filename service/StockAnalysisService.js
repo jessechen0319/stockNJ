@@ -71,9 +71,7 @@ function StockAnalysis(){
 		var loopDays = days;
 		var returnValue = [];
 		var def = deferred();
-		console.log(`start loop`);
 		function _process(){
-			console.log(Util.getFormatedDateString({date:loopDate}));
 			if(dbData[Util.getFormatedDateString({date:loopDate})]){
 				var item = {};
 				item.date = Util.getFormatedDateString({date:loopDate});
@@ -98,7 +96,6 @@ function StockAnalysis(){
 		anaylysisResult.canoon = {};
 		anaylysisResult.canoon.processing = true;
 		_checkAndUpdate().then(function(){
-			console.log(`fetch data finished`);
 			_getPreviousDaysData({days:3}).then(function(data){
 				if(data.length == 3){
 					//sort these days
@@ -176,33 +173,7 @@ function StockAnalysis(){
 						}
 					});
 
-					/*
-						if(index == day1.data.length-1){
-							//day one finish process
-							day2.data.forEach(function(item, index){
-								if(!anaylisysTemp['stock_'+item.stockCode]){
-									anaylisysTemp['stock_'+item.stockCode] = {};
-								}
-								anaylisysTemp['stock_'+item.stockCode].day2 = day2;
-
-								if(index == day2.data.length-1) {
-									day3.data.forEach(function(item, index){
-										if(!anaylisysTemp['stock_'+item.stockCode]){
-											anaylisysTemp['stock_'+item.stockCode] = {};
-										}
-										anaylisysTemp['stock_'+item.stockCode].day3 = day3;
-
-										if(index == day3.data.length-1) {
-											//-------huge block
-											var stockName = Object.keys(anaylisysTemp)[0];
-											
-											
-										}
-									});
-								}
-							});
-						}
-					});*/
+					
 				} else {
 					//data is not correct, ignore analysis
 					anaylysisResult.canoon.processing = false;

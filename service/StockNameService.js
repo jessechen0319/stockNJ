@@ -123,15 +123,13 @@ function StockService(){
 						var started = stockName.substr(0, 1);
 						var title = '';
 
-						switch(started){
-							case '6':
-								title = 'sh';
-							default:
-								title = 'sz';
-						}
+						if(started=='6'){
+							title = 'sh';
+						} else {
+							title = 'sz';
+						};
 
 						var extractPath = `/list=${title}${stockName}`;
-						console.log(`${extractPath} -> stock remind ${availableNames.length}`);
 
 						var options = {
 					      host: host,
@@ -290,15 +288,10 @@ function StockService(){
 			availableStockNames = [];
 			paths = [];
 			currentStockIndex = 0;
-			console.log(`jesse1`);
 			_SZNames().then(function(){
-				console.log(`jesse2`);
 				_CZNames().then(function(){
-					console.log(`jesse3`);
 					_CYBNames().then(function(){
-						console.log(`jesse4`);
 						var lengthPaths = paths.length;
-						console.log(`generate code finished, length = ${lengthPaths}`);
 						Util.checkEixst({host:host, paths:paths});
 					});
 				});
