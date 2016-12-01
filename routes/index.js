@@ -66,6 +66,19 @@ router.get('/canoonThree', function(req, res, next) {
     res.end();
 });
 
+router.get('/canoonThreeResult', function(req, res, next) {
+
+	if(stackAnalysisService.anaylysisResult.canoon.processing){
+		res.setHeader('Content-Type', 'application/json');
+	    res.send(JSON.stringify({ "result": "processing" }));
+	    res.end();
+	} else {
+		res.setHeader('Content-Type', 'application/json');
+	    res.send(JSON.stringify({ "result": stackAnalysisService.anaylysisResult.canoon }));
+	    res.end();
+	}
+});
+
 router.get('/canoonThreeProcessing', function(req, res, next) {
 
 	res.setHeader('Content-Type', 'application/json');

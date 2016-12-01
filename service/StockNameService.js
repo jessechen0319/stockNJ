@@ -261,6 +261,10 @@ function StockService(){
 
 		dbService.readDb(function(err, db){
 			var stockNames = db.stockNames;
+			if(!db.stockNames){
+				callback('0');
+				return;
+			}
 			var stockNumber = stockNames.length;
 			var processRate = (currentStockInfoIndex/(stockNumber+1))*100;
 			processRate = processRate.toFixed(2);

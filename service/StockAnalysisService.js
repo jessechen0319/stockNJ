@@ -73,14 +73,16 @@ function StockAnalysis(){
 		var def = deferred();
 		console.log(`start loop`);
 		function _process(){
+			console.log(Util.getFormatedDateString({date:loopDate}));
 			if(dbData[Util.getFormatedDateString({date:loopDate})]){
 				var item = {};
 				item.date = Util.getFormatedDateString({date:loopDate});
 				item.data = dbData[Util.getFormatedDateString({date:loopDate})];
 				returnValue.push(item);
 				loopDays--;
-				loopDate.setDate(loopDate.getDate() - 1);
 			}
+
+			loopDate.setDate(loopDate.getDate() - 1);
 
 			if(loopDays > 0){
 				_process();
@@ -122,13 +124,59 @@ function StockAnalysis(){
 						day3 = temp;
 					}
 
-					console.log(day1);
-
-					/*day1.data.forEach(function(item, index){
+					day1.data.forEach(function(item, index){
 						if(!anaylisysTemp['stock_'+item.stockCode]){
 							anaylisysTemp['stock_'+item.stockCode] = {};
 						}
-						anaylisysTemp['stock_'+item.stockCode].day1 = day1;
+						anaylisysTemp['stock_'+item.stockCode].day1 = item;
+					});
+
+					day2.data.forEach(function(item, index){
+						if(!anaylisysTemp['stock_'+item.stockCode]){
+							anaylisysTemp['stock_'+item.stockCode] = {};
+						}
+						anaylisysTemp['stock_'+item.stockCode].day2 = item;
+					});
+
+					day3.data.forEach(function(item, index){
+						if(!anaylisysTemp['stock_'+item.stockCode]){
+							anaylisysTemp['stock_'+item.stockCode] = {};
+						}
+						anaylisysTemp['stock_'+item.stockCode].day3 = item;
+					});
+
+
+					Object.keys(anaylisysTemp).forEach(function(item, index){
+						
+						var day1 = anaylisysTemp[item.toString()].day1;
+						var day2 = anaylisysTemp[item.toString()].day2;
+						var day3 = anaylisysTemp[item.toString()].day3;
+						
+						if(day1){
+							if(day2){
+								if(day3){
+									if(Number(day3.price)>Number(day2.price)&&Number(day1.price)>Number(day2.price)&&Number(day1.price)>Number(day3.price)){
+										if(Number(day1.amountStock)>Number(day2.amountStock)&&Number(day1.amountStock>day3.amountStock)&&Number(day3.amountStock)>Number(day2.amountStock)){
+											if(Number(day3.price)>Number(day3.beginPrice)&&Number(day1.price)>Number(day1.beginPrice)){
+												if(Number(day2.beginPrice)>Number(day3.beginPrice)&&Number(day2.lowPrice)>Number(day3.beginPrice)){
+													returnData.push(item);
+												}
+											}
+											
+										}
+									}
+								}
+							}
+						}
+
+						if(index == Object.keys(anaylisysTemp).length-1){
+							anaylysisResult.canoon.processing = false;
+							anaylysisResult.canoon.data = returnData;
+							console.log(`process finished ${anaylysisResult.canoon.data.length} was found`);
+						}
+					});
+
+					/*
 						if(index == day1.data.length-1){
 							//day one finish process
 							day2.data.forEach(function(item, index){
@@ -147,30 +195,8 @@ function StockAnalysis(){
 										if(index == day3.data.length-1) {
 											//-------huge block
 											var stockName = Object.keys(anaylisysTemp)[0];
-											console.log(anaylisysTemp['stock_000001']);
-											Object.keys(anaylisysTemp).forEach(function(item, index){
-												if(index == 1){
-													console.log(anaylisysTemp["\""+item+"\""]);
-													console.log('-----------------------------anaylisysTemp['+item+']');
-												}
-												var day1 = anaylisysTemp[item.toString()].day1;
-												var day2 = anaylisysTemp[item.toString()].day2;
-												var day3 = anaylisysTemp[item.toString()].day3;
-												if(!day1||!day2||!day3){
-													return;
-												} else {
-													if(day3.data.price>day2.data.price&&day1.data.price>day2.data.price&&day1.data.price>day3.data.price){
-														console.log(`${item} match the logic of cannon raise`);
-														returnData.push(item);
-													}
-												}
-
-												if(index == Object.keys(anaylisysTemp).length-1){
-													anaylysisResult.canoon.processing = false;
-													anaylysisResult.canoon.data = returnData;
-													console.log(`process finished ${anaylysisResult.canoon.data.length} was found`);
-												}
-											});
+											
+											
 										}
 									});
 								}
