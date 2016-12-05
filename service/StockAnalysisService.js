@@ -1,19 +1,6 @@
 var deferred = require('deferred');
 var dbService = require("../service/DBService");
 
-
-
-/*
-***************structure*****************
-analysisObject.beginPrice = arrayListInfo[1];
-analysisObject.lastDayPrice = arrayListInfo[2];
-analysisObject.price = arrayListInfo[3];
-analysisObject.topPrice = arrayListInfo[4];
-analysisObject.lowPrice = arrayListInfo[5];
-analysisObject.amountStock = arrayListInfo[8];
-analysisObject.amountMoney = arrayListInfo[9];
-analysisObject.date = arrayListInfo[30];*/
-
 function StockAnalysis(){
 
 	this.extractDate;
@@ -153,10 +140,14 @@ function StockAnalysis(){
 							if(day2){
 								if(day3){
 									if(Number(day3.price)>Number(day2.price)&&Number(day1.price)>Number(day2.price)&&Number(day1.price)>Number(day3.price)){
-										if(Number(day1.amountStock)>Number(day2.amountStock)&&Number(day1.amountStock>day3.amountStock)&&Number(day3.amountStock)>Number(day2.amountStock)){
+										if(Number(day1.amountStock)>Number(day2.amountStock)&&Number(day1.amountStock)>Number(day3.amountStock)&&Number(day3.amountStock)>Number(day2.amountStock)){
 											if(Number(day3.price)>Number(day3.beginPrice)&&Number(day1.price)>Number(day1.beginPrice)){
 												if(Number(day2.beginPrice)>Number(day3.beginPrice)&&Number(day2.lowPrice)>Number(day3.beginPrice)){
-													returnData.push(item);
+													var topPricePer1 = (Number(day1.topPrice) - Number(day1.price))/Number(day1.price);
+													var topPricePer3 = (Number(day3.topPrice) - Number(day3.price))/Number(day3.price);
+													if(topPricePer1<0.015&&topPricePer3<0.015){
+														returnData.push(item);
+													}
 												}
 											}
 											
