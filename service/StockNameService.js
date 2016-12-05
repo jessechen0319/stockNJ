@@ -110,8 +110,8 @@ function StockService(){
 					return;
 				} else {
 					totalAvailabeNumber = availableNames.length;
-
-					function _innerAnalysis(){
+					var that = this;
+					(function(){
 						var stockName = availableNames.shift();
 						currentStockInfoIndex++;
 
@@ -137,6 +137,8 @@ function StockService(){
 					      path: extractPath
 					    };
 
+					    var thatArguments = arguments;
+
 					    http.get(options, function(response) {
 					      var body = "";
 					      response.on("data", function(data) {
@@ -144,16 +146,14 @@ function StockService(){
 					      });
 					      response.on("end", function() {
 					      	_analysisDataDetailInfo({body:body});
-					      	_innerAnalysis();
 					      	if(availableNames.length == 0){
-					      		console.log('store ----->  ');
 					      		_storeExtractedStockFunction();
+					      	}else{
+					      		thatArguments.callee.call(that);
 					      	}
 					      });
 					    });
-					}
-
-					_innerAnalysis();
+					})();
 
 				}
 			});
@@ -264,7 +264,7 @@ function StockService(){
 				return;
 			}
 			var stockNumber = stockNames.length;
-			var processRate = (currentStockInfoIndex/(stockNumber+1))*100;
+			var processRate = (currentStockInfoIndex/stockNumber)*100;
 			processRate = processRate.toFixed(2);
 			callback(processRate);
 		});
