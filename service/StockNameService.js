@@ -1,4 +1,4 @@
-
+var logger = require('./LogService');
 var http = require('http');
 var deferred = require('deferred');
 var dbService = require("../service/DBService");
@@ -114,7 +114,7 @@ function StockService(){
 					(function(){
 						var stockName = availableNames.shift();
 						currentStockInfoIndex++;
-
+						logger.info(`index is ${currentStockInfoIndex}, remind is ${availableNames.length}, current stock code is ${stockName}`);
 						if(!stockName){
 							//finished extract, store data
 							return;
