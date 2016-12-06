@@ -1,5 +1,6 @@
 var deferred = require('deferred');
 var dbService = require("../service/DBService");
+var logger = require('./LogService');
 
 function StockAnalysis(){
 
