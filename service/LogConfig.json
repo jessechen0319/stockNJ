@@ -3,7 +3,7 @@
     {
       "type": "file",
       "filename": "../logs/stock.log",
-      "maxLogSize": 50480,
+      "maxLogSize": 50480000,
       "backups": 3,
       "category": "relative-logger"
     }
