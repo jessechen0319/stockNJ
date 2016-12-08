@@ -2,6 +2,7 @@ var logger = require('./LogService');
 var http = require('http');
 var deferred = require('deferred');
 var dbService = require("../service/DBService");
+var MySqlService = require("./MySqlService");
 
 function StockService(){
 
@@ -25,7 +26,13 @@ function StockService(){
 		}
 
 		function _storeNames({names}){
-			dbService.readDb(function(err, db){
+
+			MySqlService.connect();
+
+			
+			
+			connection.end();
+			/*dbService.readDb(function(err, db){
 
 				if(!db.stockNames){
 					db.stockNames = [];
@@ -40,7 +47,7 @@ function StockService(){
 					}
 				});
 
-			});
+			});*/
 		}
 
 		function _analysisData({body}){
