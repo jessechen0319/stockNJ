@@ -1,6 +1,15 @@
 var http = require('http');
 
 var Util = (function(){
+
+	function generateMySqlDate(date){
+
+		if(date instanceof Date){
+			return date.toISOString().slice(0, 19).replace('T', ' ');
+		} else {
+			return null;
+		}
+	}
 	function pad(n, width, z) {
 		z = z || '0';
 		n = n + '';
@@ -30,7 +39,8 @@ var Util = (function(){
 	}
 
 	return {"pad": pad,
-			"fetchPath": fetchPath
+			"fetchPath": fetchPath,
+			"generateMySqlDate": generateMySqlDate
 			};
 })();
 

@@ -22,44 +22,51 @@ var stockDetailService = (function(){
 			analysisObject.lowPrice = arrayListInfo[5];
 			analysisObject.amountStock = arrayListInfo[8];
 			analysisObject.amountMoney = arrayListInfo[9];
-			analysisObject.date = arrayListInfo[30];
+			analysisObject.date = Util.generateMySqlDate(new Date(arrayListInfo[30]));
 			stocks.content.push(analysisObject);
 		}
 
 		return analysisObject;
 	}
 
-	function _fetchData(code, market){
+	function _fetchData(code, market, isLast, jobId){
 		var URL = `/list=${market}${code}`;
 		Util.fetchPath("host": 'hq.sinajs.cn', "path": URL, "callback": function(data, err){
 
 			var analysisObject = _analysisData(data);
-			MySqlService.query('insert into t_stock_detail () values ()', [type, 1], function(err, result) {
+			MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values ()', [analysisObject.stockCode, analysisObject.beginPrice, analysisObject.lastDayPrice, analysisObject.price, analysisObject.topPrice, analysisObject.lowPrice, analysisObject.amountStock, analysisObject.amountMoney, analysisObject.date], function(err, result) {
 			  if (err){
-			  	callback(err);
+			  	logger.info(err);
 			  } else {
-			  	callback(null, result.insertId);
+			  	logger.info(`insert record finished {JSON.stringify(analysisObject)}`);
 			  }
 			});
 		});
+
+		if(isLast){
+			jobService.updateJobFinished(jobId);
+		}
 	}
 
-	function _getAllAvailableStocks(){
+	function fetchDetail(jobId){
 		MySqlService.query('select * from t_stock_name', function (error, results, fields) {
 		
 			if(error){
 				throw error;
 			}
 
+			jobService.updateJobRunning(jobId);
+
 			if(results&&results instanceof Array){
 				results.forEach(function(item, index){
-					setTimeout(function(){_fetchData(item.code, item.market)}, 2000*index);
+					var isLast = (index == (results.length-1));
+					setTimeout(function(){_fetchData(item.code, item.market, isLast, jobId)}, 2000*index);
 				});
 			}
 		});
 	}
 
-	return {};
+	return {"fetchDetail": fetchDetail};
 })();
 
 module.exports = stockDetailService;
