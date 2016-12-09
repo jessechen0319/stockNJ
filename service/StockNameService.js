@@ -27,12 +27,8 @@ function StockService(){
 
 		function _storeNames({names}){
 
-			MySqlService.connect();
-
 			
-			
-			connection.end();
-			/*dbService.readDb(function(err, db){
+			dbService.readDb(function(err, db){
 
 				if(!db.stockNames){
 					db.stockNames = [];
@@ -47,7 +43,7 @@ function StockService(){
 					}
 				});
 
-			});*/
+			});
 		}
 
 		function _analysisData({body}){
