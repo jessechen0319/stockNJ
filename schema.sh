@@ -1,0 +1,1 @@
+docker run -p 3306:3306 --name stock -e MYSQL_ROOT_PASSWORD=christianjesse -d mysql:8.0.0

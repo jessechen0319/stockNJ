@@ -2,6 +2,7 @@ var logger = require('./LogService');
 var http = require('http');
 var deferred = require('deferred');
 var dbService = require("../service/DBService");
+var MySqlService = require("./MySqlService");
 
 function StockService(){
 
@@ -25,6 +26,8 @@ function StockService(){
 		}
 
 		function _storeNames({names}){
+
+			
 			dbService.readDb(function(err, db){
 
 				if(!db.stockNames){
