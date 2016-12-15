@@ -31,7 +31,7 @@ var stockDetailService = (function(){
 
 	function _fetchData(code, market, isLast, jobId){
 		var URL = `/list=${market}${code}`;
-		Util.fetchPath("host": 'hq.sinajs.cn', "path": URL, "callback": function(data, err){
+		Util.fetchPath({"host": 'hq.sinajs.cn', "path": URL, "callback": function(data, err){
 
 			var analysisObject = _analysisData(data);
 			MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values ()', [analysisObject.stockCode, analysisObject.beginPrice, analysisObject.lastDayPrice, analysisObject.price, analysisObject.topPrice, analysisObject.lowPrice, analysisObject.amountStock, analysisObject.amountMoney, analysisObject.date], function(err, result) {
@@ -41,7 +41,7 @@ var stockDetailService = (function(){
 			  	logger.info(`insert record finished {JSON.stringify(analysisObject)}`);
 			  }
 			});
-		});
+		}});
 
 		if(isLast){
 			jobService.updateJobFinished(jobId);
