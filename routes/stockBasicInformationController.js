@@ -31,6 +31,7 @@ router.get('/fetchDetail', function(req, res, next) {
 		    res.send(JSON.stringify({ "result": "failed" }));
 		    res.end();
 		} else {
+			logger.info('finish create job, processing...');
 			StockDetailFetchService.fetchDetail(jobId);
 			res.setHeader('Content-Type', 'application/json');
 		    res.send(JSON.stringify({ "result": "success", "jobId":  jobId}));

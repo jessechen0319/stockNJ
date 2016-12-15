@@ -45,3 +45,19 @@ insert into t_job_status (status_id, status_desc) values (4, "Failed");
 insert into t_job_type (type_id, type_desc) values (1, "Stock Name Fetch");
 
 --**********************job************************
+
+
+CREATE TABLE `NewTable` (
+`id`  int NOT NULL AUTO_INCREMENT ,
+`stock_code`  varchar(255) NOT NULL ,
+`begin_price`  decimal NOT NULL ,
+`last_day_price`  decimal NOT NULL ,
+`price`  decimal NOT NULL ,
+`top_price`  decimal NOT NULL ,
+`low_price`  decimal NOT NULL ,
+`amount_stock`  decimal NOT NULL ,
+`amount_money`  decimal NOT NULL ,
+`date`  datetime NOT NULL ,
+PRIMARY KEY (`id`)
+)
+;

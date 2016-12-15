@@ -55,6 +55,8 @@ var stockDetailService = (function(){
 				throw error;
 			}
 
+			logger.info(`query finished, ${fields}`);
+
 			jobService.updateJobRunning(jobId);
 
 			if(results&&results instanceof Array){
