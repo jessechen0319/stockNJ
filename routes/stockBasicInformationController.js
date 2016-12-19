@@ -3,7 +3,7 @@ var router = express.Router();
 var StockNameFetch = require("../service/StockNameFetchService");
 var JobService = require("../service/JobService");
 var StockDetailFetchService = require("../service/StockDetailFetchService");
-
+var logger = require('../service/LogService');
 var stockNameFetch = new StockNameFetch();
 var jobService = new JobService();
 
