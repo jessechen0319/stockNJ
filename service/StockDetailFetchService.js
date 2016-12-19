@@ -37,7 +37,7 @@ var stockDetailService = (function(){
 			  if (err){
 			  	logger.info(err);
 			  } else {
-			  	logger.info(`insert record finished {JSON.stringify(analysisObject)}`);
+			  	logger.info(`insert record finished ${JSON.stringify(analysisObject)}`);
 			  }
 			});
 		}});
