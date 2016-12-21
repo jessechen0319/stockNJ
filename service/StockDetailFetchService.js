@@ -33,29 +33,11 @@ var stockDetailService = (function(){
 		Util.fetchPath({"host": 'hq.sinajs.cn', "path": URL, "callback": function(data, err){
 
 			var analysisObject = _analysisData(data);
-			var insertSql = `insert into t_stock_detail (stock_code,
-								 begin_price,
-								 last_day_price,
-								 price,
-								 top_price,
-								 low_price,
-								 amount_stock,
-								 amount_money,
-								 date) values (
-								 "${analysisObject.stockCode}",
-								 ${analysisObject.beginPrice},
-								 ${analysisObject.lastDayPrice},
-								 ${analysisObject.price},
-								 ${analysisObject.topPrice},
-								 ${analysisObject.lowPrice},
-								 ${analysisObject.amountStock},
-								 ${analysisObject.amountMoney},
-								 "${analysisObject.date}"
-								 )`;
-			logger.info(insertSql);
-			MySqlService.query( insertSql, function(err, result) {
+			MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [analysisObject.stockCode, Number(analysisObject.beginPrice), Number(analysisObject.lastDayPrice), Number(analysisObject.price), Number(analysisObject.topPrice), Number(analysisObject.lowPrice), Number(analysisObject.amountStock), Number(analysisObject.amountMoney), analysisObject.date], function(err, result) {
 			  if (err){
 			  	logger.info(err);
+			  } else {
+			  	logger.info(`insert record finished ${JSON.stringify(analysisObject)}`);
 			  }
 			});
 		}});
