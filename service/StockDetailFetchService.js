@@ -33,7 +33,7 @@ var stockDetailService = (function(){
 		Util.fetchPath({"host": 'hq.sinajs.cn', "path": URL, "callback": function(data, err){
 
 			var analysisObject = _analysisData(data);
-			MySqlService.query( `insert into t_stock_detail (stock_code,
+			var insertSql = `insert into t_stock_detail (stock_code,
 								 begin_price,
 								 last_day_price,
 								 price,
@@ -51,11 +51,11 @@ var stockDetailService = (function(){
 								 ${analysisObject.amountStock},
 								 ${analysisObject.amountMoney},
 								 ${analysisObject.date}
-								 )`, function(err, result) {
+								 )`;
+			logger.info(insertSql);
+			MySqlService.query( insertSql, function(err, result) {
 			  if (err){
 			  	logger.info(err);
-			  } else {
-			  	logger.info(`insert record finished ${JSON.stringify(analysisObject)}`);
 			  }
 			});
 		}});
