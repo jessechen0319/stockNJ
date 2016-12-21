@@ -46,7 +46,6 @@ insert into t_job_type (type_id, type_desc) values (1, "Stock Name Fetch");
 
 --**********************job************************
 
-
 /*
 Navicat MySQL Data Transfer
 
@@ -59,7 +58,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80000
 File Encoding         : 65001
 
-Date: 2016-12-21 20:14:47
+Date: 2016-12-21 20:24:58
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -71,13 +70,15 @@ DROP TABLE IF EXISTS `t_stock_detail`;
 CREATE TABLE `t_stock_detail` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `stock_code` varchar(255) NOT NULL,
-  `begin_price` float(10,4) NOT NULL,
-  `last_day_price` float(10,4) NOT NULL,
-  `price` float(10,4) NOT NULL,
-  `top_price` float(10,4) NOT NULL,
-  `low_price` float(10,4) NOT NULL,
-  `amount_stock` float(10,4) NOT NULL,
-  `amount_money` float(10,4) NOT NULL,
+  `begin_price` float(30,4) NOT NULL,
+  `last_day_price` float(30,4) NOT NULL,
+  `price` float(30,4) NOT NULL,
+  `top_price` float(30,4) NOT NULL,
+  `low_price` float(30,4) NOT NULL,
+  `amount_stock` float(30,4) NOT NULL,
+  `amount_money` float(30,4) NOT NULL,
   `date` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniqui` (`stock_code`,`date`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+

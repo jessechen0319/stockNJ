@@ -4,11 +4,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var schedule = require('node-schedule');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var test = require('./routes/test');
 var stockBasic = require('./routes/stockBasicInformationController');
+
+var JobService = require("./service/JobService");
+var StockDetailFetchService = require("./service/StockDetailFetchService");
+var logger = require('./service/LogService');
 
 var app = express();
 
@@ -28,6 +33,23 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/test', test);
 app.use('/stockBasic', stockBasic);
+
+/*
+  Job Block
+  
+*/
+
+schedule.scheduleJob('0 0 20 * *,1-5', function(){
+
+  jobService.createJob(2, function(err, jobId){
+    if(err){
+      logger.error(err);
+    } else {
+      logger.info(`Timer Job created successfully, with jobId ${jobId}`);
+      StockDetailFetchService.fetchDetail(jobId);
+    }
+  });
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
