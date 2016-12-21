@@ -42,7 +42,7 @@ var stockDetailService = (function(){
 								 amount_stock,
 								 amount_money,
 								 date) values (
-								 ${analysisObject.stockCode},
+								 "${analysisObject.stockCode}",
 								 ${analysisObject.beginPrice},
 								 ${analysisObject.lastDayPrice},
 								 ${analysisObject.price},
@@ -50,7 +50,7 @@ var stockDetailService = (function(){
 								 ${analysisObject.lowPrice},
 								 ${analysisObject.amountStock},
 								 ${analysisObject.amountMoney},
-								 ${analysisObject.date}
+								 "${analysisObject.date}"
 								 )`;
 			logger.info(insertSql);
 			MySqlService.query( insertSql, function(err, result) {

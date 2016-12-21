@@ -47,17 +47,37 @@ insert into t_job_type (type_id, type_desc) values (1, "Stock Name Fetch");
 --**********************job************************
 
 
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : cloud
+Source Server Version : 80000
+Source Host           : 115.159.68.208:3306
+Source Database       : stock
+
+Target Server Type    : MYSQL
+Target Server Version : 80000
+File Encoding         : 65001
+
+Date: 2016-12-21 20:14:47
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for t_stock_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `t_stock_detail`;
 CREATE TABLE `t_stock_detail` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `stock_code` varchar(255) NOT NULL,
-  `begin_price` double(10,0) NOT NULL,
-  `last_day_price` double(10,0) NOT NULL,
-  `price` double(10,0) NOT NULL,
-  `top_price` double(10,0) NOT NULL,
-  `low_price` double(10,0) NOT NULL,
-  `amount_stock` double(10,0) NOT NULL,
-  `amount_money` double(10,0) NOT NULL,
+  `begin_price` float(10,4) NOT NULL,
+  `last_day_price` float(10,4) NOT NULL,
+  `price` float(10,4) NOT NULL,
+  `top_price` float(10,4) NOT NULL,
+  `low_price` float(10,4) NOT NULL,
+  `amount_stock` float(10,4) NOT NULL,
+  `amount_money` float(10,4) NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
-
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
