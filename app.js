@@ -13,7 +13,6 @@ var stockBasic = require('./routes/stockBasicInformationController');
 
 var JobService = require("./service/JobService");
 var StockDetailFetchService = require("./service/StockDetailFetchService");
-var logger = require('./service/LogService');
 
 var app = express();
 
@@ -43,9 +42,7 @@ schedule.scheduleJob('0 0 20 * *,1-5', function(){
 
   jobService.createJob(2, function(err, jobId){
     if(err){
-      logger.error(err);
     } else {
-      logger.info(`Timer Job created successfully, with jobId ${jobId}`);
       StockDetailFetchService.fetchDetail(jobId);
     }
   });
