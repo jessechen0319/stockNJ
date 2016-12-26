@@ -4,7 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var schedule = require('node-schedule');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -38,15 +37,16 @@ app.use('/stockBasic', stockBasic);
   
 */
 
-schedule.scheduleJob('0 0 20 * *,1-5', function(){
-
+var CronJob = require('cron').CronJob;
+new CronJob('00 00 16 * * 1-5', function() {
+  var jobService = new JobService();
   jobService.createJob(2, function(err, jobId){
     if(err){
     } else {
       StockDetailFetchService.fetchDetail(jobId);
     }
-  });
-});
+  }, "Daily Job fetching");
+}, null, true, 'Asia/Shanghai');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
