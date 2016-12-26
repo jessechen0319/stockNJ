@@ -40,9 +40,9 @@ function JobService(){
 		});
 	};
 
-	this.createJob = function(type, callback){
+	this.createJob = function(type, callback, source){
 
-		MySqlService.query('insert into t_job (job_type_id, job_status_id) values (?, ?)', [type, 1], function(err, result) {
+		MySqlService.query('insert into t_job (job_type_id, job_status_id, date, source) values (?, ?, ?, ?)', [type, 1, Util.generateMySqlDate(new Date()), source?source:"UNKOWN"], function(err, result) {
 		  if (err){
 		  	logger.info("fail to create job");
 		  	callback?callback(err):"";
