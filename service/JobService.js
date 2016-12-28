@@ -1,5 +1,6 @@
 var MySqlService = require("./MySqlService");
 var logger = require('./LogService');
+var Util = require("./Util");
 
 function JobService(){
 
