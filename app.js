@@ -40,7 +40,7 @@ app.use('/stockBasic', stockBasic);
 */
 
 var CronJob = require('cron').CronJob;
-new CronJob('00 50 15 * * 1-5', function() {
+new CronJob('00 07 16 * * 1-5', function() {
   localLogger.info("**********jesselog*********************creating job****************");
   var jobService = new JobService();
   jobService.createJob(2, function(err, jobId){
