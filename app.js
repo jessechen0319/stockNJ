@@ -38,7 +38,7 @@ app.use('/stockBasic', stockBasic);
 */
 
 var CronJob = require('cron').CronJob;
-new CronJob('00 00 16 * * 1-5', function() {
+new CronJob('00 10 16 * * 1-5', function() {
   var jobService = new JobService();
   jobService.createJob(2, function(err, jobId){
     if(err){
