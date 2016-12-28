@@ -13,6 +13,8 @@ var stockBasic = require('./routes/stockBasicInformationController');
 var JobService = require("./service/JobService");
 var StockDetailFetchService = require("./service/StockDetailFetchService");
 
+var localLogger = require("./service/LogService");
+
 var app = express();
 
 // view engine setup
@@ -38,12 +40,12 @@ app.use('/stockBasic', stockBasic);
 */
 
 var CronJob = require('cron').CronJob;
-new CronJob('00 18 16 * * 1-5', function() {
-  console.log("**********jesselog*********************creating job****************");
+new CronJob('00 32 15 * * 1-5', function() {
+  localLogger.info("**********jesselog*********************creating job****************");
   var jobService = new JobService();
   jobService.createJob(2, function(err, jobId){
     if(err){
-      console.log("**********jesselog*********************creating job****************"+err);
+      localLogger.error("**********jesselog*********************creating job****************"+err);
     } else {
       StockDetailFetchService.fetchDetail(jobId);
     }
