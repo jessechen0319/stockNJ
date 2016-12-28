@@ -38,10 +38,12 @@ app.use('/stockBasic', stockBasic);
 */
 
 var CronJob = require('cron').CronJob;
-new CronJob('00 10 16 * * 1-5', function() {
+new CronJob('00 18 16 * * 1-5', function() {
+  console.log("**********jesselog*********************creating job****************");
   var jobService = new JobService();
   jobService.createJob(2, function(err, jobId){
     if(err){
+      console.log("**********jesselog*********************creating job****************"+err);
     } else {
       StockDetailFetchService.fetchDetail(jobId);
     }
