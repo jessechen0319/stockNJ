@@ -60,7 +60,7 @@ app.controller('index', function ($scope, $http, $rootScope) {
 	};
 	
 
-	setInterval(function(){
+/*	setInterval(function(){
 		$http({
 		  method: 'GET',
 		  url: '/getProcessRate'
@@ -84,7 +84,7 @@ app.controller('index', function ($scope, $http, $rootScope) {
 			}
 		}, function errorCallback(response) {
 		});
-	}, 2000);
+	}, 2000);*/
 
 	for (var i = 0; i < 5; i++) {
 		var dateTemp = new Date();
