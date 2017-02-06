@@ -50,7 +50,7 @@ new CronJob('00 07 16 * * 1-5', function() {
   }, "Daily Job fetching");
 }, null, true, 'Asia/Shanghai');
 
-new CronJob('00 59 20 * * 1-5', function() {
+new CronJob('00 04 21 * * 1-5', function() {
   var jobService = new JobService();
   jobService.createJob(2, function(err, jobId){
     if(err){
