@@ -85,7 +85,7 @@ var stockDetailService = (function(){
 							averages.forEach(function(peroid){
 								if(peroid < results.length){
 									var sum = 0;
-									for( int i = 0; i<peroid; i++){
+									for( var i = 0; i<peroid; i++){
 										sum += results[i].price;
 									}
 									var average = sum/peroid;
