@@ -69,7 +69,41 @@ var stockDetailService = (function(){
 		});
 	}
 
-	return {"fetchDetail": fetchDetail};
+	function fetchAverage(jobId){
+
+		var averages = [10,13,20,30,34,55,60,120,144];
+		MySqlService.query('select * from t_stock_name', function (error, stockNameResults, fields) {
+			if(error){
+				throw error;
+			}
+			jobService.updateJobRunning(jobId);
+			if(stockNameResults&&stockNameResults instanceof Array){
+				stockNameResults.forEach(function(item, index){
+					//item.code
+					MySqlService.query(`select * from t_stock_detail where stock_code='${item.code}' order by date desc`,
+						function (error, results, fields) {
+							averages.forEach(function(peroid){
+								if(peroid < results.length){
+									var sum = 0;
+									for( int i = 0; i<peroid; i++){
+										sum += results[i].price;
+									}
+									var average = sum/peroid;
+									average = average.toFixed(2);
+									logger.info(`${item.code} with ${peroid} average is ${average}`);
+								}
+							});
+					});
+				});
+				if (index+1==stockNameResults.length) {//finish the job
+					jobService.updateJobFinished(jobId);
+				}
+			}
+		});
+	}
+
+	return {"fetchDetail": fetchDetail,
+			"fetchAverage": fetchAverage};
 })();
 
 module.exports = stockDetailService;

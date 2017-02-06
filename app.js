@@ -41,13 +41,21 @@ app.use('/stockBasic', stockBasic);
 
 var CronJob = require('cron').CronJob;
 new CronJob('00 07 16 * * 1-5', function() {
-  localLogger.info("**********jesselog*********************creating job****************");
   var jobService = new JobService();
   jobService.createJob(2, function(err, jobId){
     if(err){
-      localLogger.error("**********jesselog*********************creating job****************"+err);
     } else {
       StockDetailFetchService.fetchDetail(jobId);
+    }
+  }, "Daily Job fetching");
+}, null, true, 'Asia/Shanghai');
+
+new CronJob('00 07 19 * * 1-5', function() {
+  var jobService = new JobService();
+  jobService.createJob(2, function(err, jobId){
+    if(err){
+    } else {
+      StockDetailFetchService.fetchAverage(jobId);
     }
   }, "Daily Job fetching");
 }, null, true, 'Asia/Shanghai');
