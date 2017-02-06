@@ -7,6 +7,9 @@ var stockNameService = new StockNameService();
 
 var StockAnalysisService = require("../service/StockAnalysisService");
 var stackAnalysisService = new StockAnalysisService();
+
+var StockDetailFetchService = require("../service/StockDetailFetchService");
+var JobService = require("../service/JobService");
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	
@@ -15,7 +18,14 @@ router.get('/', function(req, res, next) {
 
 router.get('/getProcessRate', function(req, res, next) {
 
-	var processRate = stockNameService.getProcessRate();
+	var jobService = new JobService();
+	jobService.createJob(2, function(err, jobId){
+	  if(err){
+	  } else {
+	    StockDetailFetchService.fetchAverage(jobId);
+	  }
+	}, "Daily Job fetching");
+
 	res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({ "processRate": processRate }));
     res.end();
