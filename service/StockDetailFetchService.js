@@ -94,10 +94,10 @@ var stockDetailService = (function(){
 								}
 							});
 					});
+					if (index+1==stockNameResults.length) {//finish the job
+						jobService.updateJobFinished(jobId);
+					}
 				});
-				if (index+1==stockNameResults.length) {//finish the job
-					jobService.updateJobFinished(jobId);
-				}
 			}
 		});
 	}
