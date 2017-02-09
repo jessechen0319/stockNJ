@@ -22,9 +22,9 @@ router.get('/getProcessRate', function(req, res, next) {
 	jobService.createJob(2, function(err, jobId){
 	  if(err){
 	  } else {
-	    StockDetailFetchService.fetchAverage(jobId);
+	    StockDetailFetchService.fetchInit(jobId);
 	  }
-	}, "Daily Job fetching");
+	}, "initial Job fetching");
 
 	res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({ "processRate": processRate }));

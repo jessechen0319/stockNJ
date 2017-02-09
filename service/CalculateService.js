@@ -21,7 +21,7 @@ function calcMACD({preEma12, preEma26, preDea, price}){
 var options = {
   host: 'q.stock.sohu.com',
   port: 80,
-  path: '/hisHq?code=cn_601628&start=20170201&end=20170207&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp&r=0.9310515393362175&0.40358688832404455'
+  path: '/hisHq?code=cn_601628&start=19900101&end=20170207&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp&r=0.9310515393362175&0.40358688832404455'
 };
 
 http.get(options, function(response) {
