@@ -51,63 +51,78 @@ var stockDetailService = (function(){
 		}
 	}
 
-	var tempJson = [];
 
 	function _fetchInitData(code, callback){
 
 		let URL = `/hisHq?code=cn_${code}&start=19900101&end=20170209&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp&r=0.9310515393362175&0.40358688832404455`;
 		Util.fetchPath({"host": 'q.stock.sohu.com', "path": URL, "callback": function(data, err){
 			var that = this;
+
 			if(err){
 				logger.error(JSON.stringify(err));			
 			} else {
-				var data = JSON.parse(data.slice(21, data.length-2));
-				var stockCode = data[0].code.slice(3, data[0].code.length)
-				data[0]['hq'].forEach(function(item, index){
-					var stockObject = {
-						'stockCode':stockCode
+				try{
+					var data = JSON.parse(data.slice(21, data.length-2));
+					var stockCode = data[0].code.slice(3, data[0].code.length);
+					if(!data[0]['hq']){
+						logger.info(`No data for ${code}`);
+						return;
 					}
-					var date = new Date(item[0]);
-					stockObject.date = Util.generateMySqlDate(date);
-					stockObject.beginPrice = Number(item[1]);
-					stockObject.price = Number(item[2]);
-					stockObject.lowPrice = Number(item[5]);
-					stockObject.topPrice = Number(item[6]);
-					stockObject.amountStock = Number(item[7])*100;
-					stockObject.amountStock = Number(stockObject.amountStock.toFixed(0));
-					stockObject.amountMoney = Number(item[8])*10000;
-					stockObject.amountMoney = Number(stockObject.amountMoney.toFixed(0));
-					stockObject.lastDayPrice = 0;
-
-					tempJson.push(stockObject);
-
-					if(index == data[0]['hq'].length-1){
-						logger.info(`init fetch finished for ${code}, tempJson file size is ${tempJson.length}`);
-						callback();
-					}
-
-
-					/*function insertValue(){
-						MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
-						  if (err){
-						  	logger.info(err);
-						  } else {
-						  	logger.info(`insert record finished ${JSON.stringify(stockObject)}`);
-						  }
-						});
-						if(index == data[0]['hq'].length-1){
-							callback();
-						} else {
-							setTimeout(function(){
-								auguments.callee.apply(that);
-							}, 500);
+					data[0]['hq'].forEach(function(item, index){
+						var stockObject = {
+							'stockCode':stockCode
 						}
-					}
+						var date = new Date(item[0]);
+						stockObject.date = Util.generateMySqlDate(date);
+						stockObject.beginPrice = Number(item[1]);
+						stockObject.price = Number(item[2]);
+						stockObject.lowPrice = Number(item[5]);
+						stockObject.topPrice = Number(item[6]);
+						stockObject.amountStock = Number(item[7])*100;
+						stockObject.amountStock = Number(stockObject.amountStock.toFixed(0));
+						stockObject.amountMoney = Number(item[8])*10000;
+						stockObject.amountMoney = Number(stockObject.amountMoney.toFixed(0));
+						stockObject.lastDayPrice = 0;
 
-					setTimeout(function(){
-						insertValue();
-					}, 500);*/
-				});
+						if(index == data[0]['hq'].length-1){
+							logger.info(`init fetch finished for ${code}, size is ${index+1}`);
+							callback();
+						}*
+
+						/*tempJson.push(stockObject);
+
+						if(index == data[0]['hq'].length-1){
+							logger.info(`init fetch finished for ${code}, tempJson file size is ${tempJson.length}`);
+							callback();
+						}*/
+
+
+						/*function insertValue(){
+							MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
+							  if (err){
+							  	logger.info(err);
+							  } else {
+							  	logger.info(`insert record finished ${JSON.stringify(stockObject)}`);
+							  }
+							});
+							if(index == data[0]['hq'].length-1){
+								callback();
+							} else {
+								setTimeout(function(){
+									auguments.callee.apply(that);
+								}, 500);
+							}
+						}
+
+						setTimeout(function(){
+							insertValue();
+						}, 500);*/
+					});
+				}catch(e){
+					logger.error(e);
+				}
+				
+				
 			}
 		}});
 	}
@@ -133,11 +148,7 @@ var stockDetailService = (function(){
 							_fetch();
 						} else {
 							logger.info('fetch init finished.');
-							jsonfile.writeFile(__dirname+'init.json', tempJson, function (err) {
-							   if(err){
-							   		logger.error('error to store');
-							   }
-							});
+							
 						}
 					});
 				}
