@@ -74,7 +74,7 @@ var stockDetailService = (function(){
 					stockObject.amountMoney = Number(item[8])*10000;
 					stockObject.amountMoney = Number(stockObject.amountMoney.toFixed(0));
 					stockObject.lastDayPrice = 0;
-					MySqlService.query(`select count(*) as num from t_stock_detail where stock_code="${stockObject.stockCode}" and date=${stockObject.date}`, , function (error, results, fields){
+					MySqlService.query(`select count(*) as num from t_stock_detail where stock_code="${stockObject.stockCode}" and date=${stockObject.date}`, function (error, results, fields){
 
 						if(results[0].num>0){
 							console.log(`stock_code="${stockObject.stockCode}" and date=${stockObject.date} existed`);
