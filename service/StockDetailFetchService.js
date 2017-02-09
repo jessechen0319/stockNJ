@@ -106,7 +106,7 @@ var stockDetailService = (function(){
 					setTimeout(function(){
 						if(fetchFlag){//can raise new http request
 							fetchFlag = false; //lock the fetch flag
-							_fetchInitData(item.code， function(){
+							_fetchInitData(item.code, function(){
 								fetchFlag = true;
 							});
 						}
