@@ -34,6 +34,7 @@ var stockDetailService = (function(){
 
 			var analysisObject = _analysisData(data);
 			if(Number(analysisObject.amountStock) != 0 && Number(analysisObject.amountMoney) != 0){
+
 				MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [analysisObject.stockCode, Number(analysisObject.beginPrice), Number(analysisObject.lastDayPrice), Number(analysisObject.price), Number(analysisObject.topPrice), Number(analysisObject.lowPrice), Number(analysisObject.amountStock), Number(analysisObject.amountMoney), analysisObject.date], function(err, result) {
 				  if (err){
 				  	logger.info(err);
@@ -73,16 +74,23 @@ var stockDetailService = (function(){
 					stockObject.amountMoney = Number(item[8])*10000;
 					stockObject.amountMoney = Number(stockObject.amountMoney.toFixed(0));
 					stockObject.lastDayPrice = 0;
-					MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
-					  if(index == data[0]['hq'].length-1){
-					  	callback();
-					  }
-					  if (err){
-					  	logger.info(err);
-					  } else {
-					  	logger.info(`insert record finished ${JSON.stringify(stockObject)}`);
-					  }
-					});
+					MySqlService.query(`select count(*) as num from t_stock_detail where stock_code="${stockObject.stockCode}" and date=${stockObject.date}`, , function (error, results, fields){
+
+						if(results[0].num>0){
+							console.log(`stock_code="${stockObject.stockCode}" and date=${stockObject.date} existed`);
+						} else {
+							MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
+							  if (err){
+							  	logger.info(err);
+							  } else {
+							  	logger.info(`insert record finished ${JSON.stringify(stockObject)}`);
+							  }
+							});
+						}
+						if(index == data[0]['hq'].length-1){
+							callback();
+						}
+					})
 				});
 			}
 		}});
