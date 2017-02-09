@@ -85,7 +85,7 @@ var stockDetailService = (function(){
 					});
 				});
 			}
-		});
+		}});
 	}
 
 	function fetchInit(jobId){
