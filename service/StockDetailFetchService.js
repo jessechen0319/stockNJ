@@ -87,7 +87,7 @@ var stockDetailService = (function(){
 						if(index == data[0]['hq'].length-1){
 							logger.info(`init fetch finished for ${code}, size is ${index+1}`);
 							callback();
-						}*
+						}
 
 						/*tempJson.push(stockObject);
 
