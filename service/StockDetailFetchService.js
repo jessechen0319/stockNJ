@@ -50,6 +50,8 @@ var stockDetailService = (function(){
 		}
 	}
 
+	var tempJson = [];
+
 	function _fetchInitData(code, callback){
 
 		let URL = `/hisHq?code=cn_${code}&start=19900101&end=20170209&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp&r=0.9310515393362175&0.40358688832404455`;
@@ -76,7 +78,14 @@ var stockDetailService = (function(){
 					stockObject.amountMoney = Number(stockObject.amountMoney.toFixed(0));
 					stockObject.lastDayPrice = 0;
 
-					function insertValue(){
+					tempJson.push(stockObject);
+
+					if(index == data[0]['hq'].length-1){
+						callback();
+					}
+
+
+					/*function insertValue(){
 						MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
 						  if (err){
 						  	logger.info(err);
@@ -95,7 +104,7 @@ var stockDetailService = (function(){
 
 					setTimeout(function(){
 						insertValue();
-					}, 500);
+					}, 500);*/
 			}
 		}});
 	}
@@ -120,7 +129,7 @@ var stockDetailService = (function(){
 							fetchFlag = false; //lock the fetch flag
 							_fetchInitData(item.code, function(){
 								fetchFlag = true;
-								logger.info(`init fetch finished for ${item.code}`);
+								logger.info(`init fetch finished for ${item.code}, tempJson file size is ${tempJson.length}`);
 							});
 						}
 					}, 500);
