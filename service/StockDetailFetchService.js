@@ -79,14 +79,7 @@ var stockDetailService = (function(){
 					stockObject.amountMoney = Number(stockObject.amountMoney.toFixed(0));
 					stockObject.lastDayPrice = 0;
 
-					MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
-					  if (err){
-					  	logger.error('insert into DB error:');
-					  	logger.error(err);
-					  } else {
-					  	logger.info(`successfully insert->${code} at ${stockObject.date}`)
-					  }
-					});
+					tempJson.push(stockObject);
 
 					if(index == data[0]['hq'].length-1){
 						logger.info(`init fetch finished for ${code}, tempJson file size is ${tempJson.length}`);
@@ -142,7 +135,7 @@ var stockDetailService = (function(){
 							logger.info('fetch init finished.');
 							jsonfile.writeFile(__dirname+'init.json', tempJson, function (err) {
 							   if(err){
-							   		logger.error(tempJson);
+							   		logger.error('error to store');
 							   }
 							});
 						}
