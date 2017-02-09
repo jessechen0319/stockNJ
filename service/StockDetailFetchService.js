@@ -132,12 +132,16 @@ var stockDetailService = (function(){
 						  if(storeObjects.length == 0){
 						  	callback();
 						  }else{
-						  	setTimeout(_store.bind(that), 500);
+						  	setTimeout(function(){
+						  		_store();
+						  	}, 500);
 						  }
 						  
 						});
 					}
-					setTimeout(_store.bind(that), 500);
+					setTimeout(function(){
+						_store();
+					}, 500);
 				}catch(e){
 					logger.error(e);
 				}
