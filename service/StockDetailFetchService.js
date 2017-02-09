@@ -120,7 +120,7 @@ var stockDetailService = (function(){
 						}, 500);*/
 					});
 
-					function _store(){
+					function _store(storeObjects){
 						var that = this;
 						var stockObject = storeObjects.shift();
 						MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
@@ -133,14 +133,14 @@ var stockDetailService = (function(){
 						  	callback();
 						  }else{
 						  	setTimeout(function(){
-						  		_store();
+						  		_store(storeObjects);
 						  	}, 500);
 						  }
 						  
 						});
 					}
 					setTimeout(function(){
-						_store();
+						_store(storeObjects);
 					}, 500);
 				}catch(e){
 					logger.error(e);
