@@ -40,7 +40,7 @@ app.use('/stockBasic', stockBasic);
 */
 
 var CronJob = require('cron').CronJob;
-new CronJob('00 07 16 * * 1-5', function() {
+/*new CronJob('00 07 16 * * 1-5', function() {
   var jobService = new JobService();
   jobService.createJob(2, function(err, jobId){
     if(err){
@@ -48,7 +48,7 @@ new CronJob('00 07 16 * * 1-5', function() {
       StockDetailFetchService.fetchDetail(jobId);
     }
   }, "Daily Job fetching");
-}, null, true, 'Asia/Shanghai');
+}, null, true, 'Asia/Shanghai');*/
 
 new CronJob('00 04 21 * * 1-5', function() {
   var jobService = new JobService();

@@ -68,7 +68,7 @@ var stockDetailService = (function(){
 						logger.info(`No data for ${code}`);
 						return;
 					}
-					var storeObjects = data[0]['hq'].forEach(function(item, index){
+					var storeObjects = data[0]['hq'].map(function(item, index){
 						var stockObject = {
 							'stockCode':stockCode
 						}
@@ -84,43 +84,22 @@ var stockDetailService = (function(){
 						stockObject.amountMoney = Number(stockObject.amountMoney.toFixed(0));
 						stockObject.lastDayPrice = 0;
 						return stockObject;
-
-						/*if(index == data[0]['hq'].length-1){
-							logger.info(`init fetch finished for ${code}, size is ${index+1}`);
-							callback();
-						}*/
-
-						/*tempJson.push(stockObject);
-
-						if(index == data[0]['hq'].length-1){
-							logger.info(`init fetch finished for ${code}, tempJson file size is ${tempJson.length}`);
-							callback();
-						}*/
-
-
-						/*function insertValue(){
-							MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
-							  if (err){
-							  	logger.info(err);
-							  } else {
-							  	logger.info(`insert record finished ${JSON.stringify(stockObject)}`);
-							  }
-							});
-							if(index == data[0]['hq'].length-1){
-								callback();
-							} else {
-								setTimeout(function(){
-									auguments.callee.apply(that);
-								}, 500);
-							}
-						}
-
-						setTimeout(function(){
-							insertValue();
-						}, 500);*/
 					});
 
-					function _store(storeObjects){
+					/*storeObjects.forEach(function(stockObject, index){
+						MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
+						  if (err){
+						  	logger.info(err);
+						  } else {
+						  	logger.info(`insert record finished ${JSON.stringify(stockObject)}`);
+						  }
+						  if(index == storeObjects.length){
+						  	callback();
+						  }
+						});
+					});*/
+
+					function _store(){
 						var that = this;
 						var stockObject = storeObjects.shift();
 						MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
@@ -133,14 +112,14 @@ var stockDetailService = (function(){
 						  	callback();
 						  }else{
 						  	setTimeout(function(){
-						  		_store(storeObjects);
+						  		_store();
 						  	}, 500);
 						  }
 						  
 						});
 					}
 					setTimeout(function(){
-						_store(storeObjects);
+						_store();
 					}, 500);
 				}catch(e){
 					logger.error(e);
