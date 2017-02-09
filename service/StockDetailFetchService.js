@@ -3,6 +3,7 @@ var Util = require("./Util");
 var logger = require('./LogService');
 var JobService = require("../service/JobService");
 var jobService = new JobService();
+var jsonfile = require('jsonfile');
 
 var stockDetailService = (function(){
 
@@ -81,6 +82,7 @@ var stockDetailService = (function(){
 					tempJson.push(stockObject);
 
 					if(index == data[0]['hq'].length-1){
+						logger.info(`init fetch finished for ${code}, tempJson file size is ${tempJson.length}`);
 						callback();
 					}
 
@@ -123,7 +125,25 @@ var stockDetailService = (function(){
 			jobService.updateJobRunning(jobId);
 			if(results&&results instanceof Array){
 				var fetchFlag = true;
-				results.forEach(function(item, index){
+				function _fetch(){
+					var result = results.shift();
+					let code = result.code;
+					_fetchInitData(code, function(){
+						if(results.length != 0){
+							_fetch();
+						} else {
+							logger.info('fetch init finished.');
+							jsonfile.writeFile(__dirname+'init.json', tempJson, function (err) {
+							   if(err){
+							   		logger.error(tempJson);
+							   }
+							});
+						}
+					});
+				}
+				_fetch();
+
+				/*results.forEach(function(item, index){
 					let isLast = (index == (results.length-1));
 					setTimeout(function(){
 						if(fetchFlag){//can raise new http request
@@ -134,7 +154,15 @@ var stockDetailService = (function(){
 							});
 						}
 					}, 500);
-				});
+
+					if(isLast){
+						jsonfile.writeFile(__dirname+'init.json', tempJson, function (err) {
+						   if(err){
+						   		logger.error(tempJson);
+						   }
+						})
+					}
+				});*/
 			}
 		});
 	}
