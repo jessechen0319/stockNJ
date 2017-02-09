@@ -105,6 +105,7 @@ var stockDetailService = (function(){
 					setTimeout(function(){
 						insertValue();
 					}, 500);*/
+				});
 			}
 		}});
 	}
