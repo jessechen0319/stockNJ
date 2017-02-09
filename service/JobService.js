@@ -46,6 +46,7 @@ function JobService(){
 		MySqlService.query('insert into t_job (job_type_id, job_status_id, date, source) values (?, ?, ?, ?)', [type, 1, Util.generateMySqlDate(new Date()), source?source:"UNKOWN"], function(err, result) {
 		  if (err){
 		  	logger.info("fail to create job");
+		  	logger.error(err);
 		  	callback?callback(err):"";
 		  } else {
 		  	logger.info("Create job for ->"+result.insertId);
