@@ -86,29 +86,40 @@ var stockDetailService = (function(){
 						return stockObject;
 					});
 
-					/*storeObjects.forEach(function(stockObject, index){
-						MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
-						  if (err){
-						  	logger.info(err);
-						  } else {
-						  	logger.info(`insert record finished ${JSON.stringify(stockObject)}`);
-						  }
-						  if(index == storeObjects.length){
-						  	callback();
-						  }
-						});
-					});*/
+
 
 					function _store(){
 						var that = this;
-						var stockObject = storeObjects.shift();
-						MySqlService.query('insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values (?, ?,?,?,?,?,?,?,?)', [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date], function(err, result) {
+						var tempList = [];
+						while(tempList.length<=10 && storeObjects.length>0){
+							var stockObject = storeObjects.shift();
+							tempList.push(stockObject);
+						}
+
+						var sql = 'insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values';
+
+						for(var i = 1; i <= tempList.length ; i++){
+							sql+="(?,?,?,?,?,?,?,?,?)";
+							if(i!=tempList.length){
+								sql+=", ";
+							}
+						}
+
+
+						var valueArrays = [];
+
+						storeObjects.forEach(function(stockObject, index){
+							logger.info(`[record]: stockObject${stockObject.stockCode}->${stockObject.date}`);
+							var valueArray = [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date];
+							valueArrays = valueArrays.concat(valueArray);
+						});
+						
+						MySqlService.query(sql, valueArrays, function(err, result) {
 						  if (err){
-						  	logger.info(err);
-						  } else {
-						  	logger.info(`insert record finished ${JSON.stringify(stockObject)}`);
+						  	logger.error(err);
 						  }
 						  if(storeObjects.length == 0){
+						  	logger.info('finished insert record: '+ stockObject.stockCode);
 						  	callback();
 						  }else{
 						  	setTimeout(function(){
@@ -136,45 +147,23 @@ var stockDetailService = (function(){
 				throw error;
 			}
 
-			logger.info(`query finished, ${fields}`);
-
 			jobService.updateJobRunning(jobId);
 			if(results&&results instanceof Array){
 				var fetchFlag = true;
 				function _fetch(){
 					var result = results.shift();
 					let code = result.code;
+					logger.info('starting insert record: '+ code);
 					_fetchInitData(code, function(){
 						if(results.length != 0){
-							_fetch();
+							setTimeout(function(){_fetch()}, 3000);
 						} else {
 							logger.info('fetch init finished.');
 							
 						}
 					});
 				}
-				_fetch();
-
-				/*results.forEach(function(item, index){
-					let isLast = (index == (results.length-1));
-					setTimeout(function(){
-						if(fetchFlag){//can raise new http request
-							fetchFlag = false; //lock the fetch flag
-							_fetchInitData(item.code, function(){
-								fetchFlag = true;
-								logger.info(`init fetch finished for ${item.code}, tempJson file size is ${tempJson.length}`);
-							});
-						}
-					}, 500);
-
-					if(isLast){
-						jsonfile.writeFile(__dirname+'init.json', tempJson, function (err) {
-						   if(err){
-						   		logger.error(tempJson);
-						   }
-						})
-					}
-				});*/
+				setTimeout(function(){_fetch()}, 3000);
 			}
 		});
 	}
