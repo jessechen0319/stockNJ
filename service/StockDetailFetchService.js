@@ -105,11 +105,9 @@ var stockDetailService = (function(){
 							}
 						}
 
-
 						var valueArrays = [];
 
 						storeObjects.forEach(function(stockObject, index){
-							logger.info(`[record]: stockObject${stockObject.stockCode}->${stockObject.date}`);
 							var valueArray = [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date];
 							valueArrays = valueArrays.concat(valueArray);
 						});
