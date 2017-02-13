@@ -106,7 +106,7 @@ var stockDetailService = (function(){
 					  if (err){
 					  	logger.error(err);
 					  }
-					  logger.info('finished insert record: '+ stockObject.stockCode);
+					  logger.info('finished insert record: ' + stockCode);
 					  callback();
 					});
 
