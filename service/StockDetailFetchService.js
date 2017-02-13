@@ -86,20 +86,42 @@ var stockDetailService = (function(){
 						return stockObject;
 					});
 
+					var sql = 'insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values ';
 
+					for(var i = 1; i <= storeObjects.length ; i++){
+						sql+=" (?,?,?,?,?,?,?,?,?) ";
+						if(i!=storeObjects.length){
+							sql+=", ";
+						}
+					}
 
-					function _store(){
+					var valueArrays = [];
+
+					storeObjects.forEach(function(stockObject, index){
+						var valueArray = [stockObject.stockCode, Number(stockObject.beginPrice), Number(stockObject.lastDayPrice), Number(stockObject.price), Number(stockObject.topPrice), Number(stockObject.lowPrice), Number(stockObject.amountStock), Number(stockObject.amountMoney), stockObject.date];
+						valueArrays = valueArrays.concat(valueArray);
+					});
+
+					MySqlService.query(sql, valueArrays, function(err, result) {
+					  if (err){
+					  	logger.error(err);
+					  }
+					  logger.info('finished insert record: '+ stockObject.stockCode);
+					  callback();
+					});
+
+					/*function _store(){
 						var that = this;
 						var tempList = [];
-						while(tempList.length<=10 && storeObjects.length>0){
+						while(tempList.length < 150 && storeObjects.length>0){
 							var stockObject = storeObjects.shift();
 							tempList.push(stockObject);
 						}
 
-						var sql = 'insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values';
+						var sql = 'insert into t_stock_detail (stock_code, begin_price, last_day_price, price, top_price, low_price, amount_stock, amount_money, date) values ';
 
 						for(var i = 1; i <= tempList.length ; i++){
-							sql+="(?,?,?,?,?,?,?,?,?)";
+							sql+=" (?,?,?,?,?,?,?,?,?) ";
 							if(i!=tempList.length){
 								sql+=", ";
 							}
@@ -129,7 +151,7 @@ var stockDetailService = (function(){
 					}
 					setTimeout(function(){
 						_store();
-					}, 500);
+					}, 500);*/
 				}catch(e){
 					logger.error(e);
 				}
