@@ -54,7 +54,7 @@ var stockDetailService = (function(){
 
 	function _fetchInitData(code, callback){
 
-		let URL = `/hisHq?code=cn_${code}&start=19900101&end=20170209&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp&r=0.9310515393362175&0.40358688832404455`;
+		let URL = `/hisHq?code=cn_${code}&start=19900101&end=20170213&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp&r=0.9310515393362175&0.40358688832404455`;
 		Util.fetchPath({"host": 'q.stock.sohu.com', "path": URL, "callback": function(data, err){
 			var that = this;
 
