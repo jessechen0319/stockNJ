@@ -127,23 +127,24 @@ var stockDetailService = (function(){
 			MySqlService.query('select * from t_stock_name', function (error, results, fields){
 
 				jsonfile.writeFile(__dirname+"//stockName.json", results,  (err)=> {
-					logger.error(err)
+					logger.error(err);
+					function exe(){
+						var readFileArray = jsonfile.readFileSync(__dirname+"//stockName.json");
+						var code = readFileArray.shift().code;
+						logger.info(`start execute: ${code} - remind number is ${readFileArray.length}`);
+						jsonfile.writeFileSync(__dirname+"//stockName.json", readFileArray);
+						_fetchInitData(code, function(){
+							if(readFileArray&&readFileArray.length>0){
+								exe();
+							}
+						});
+					}
+
+					exe();
 				});
 			});
 
-			function exe(){
-				var readFileArray = jsonfile.readFileSync(__dirname+"//stockName.json");
-				var code = readFileArray.shift().code;
-				logger.info(`start execute: ${code} - remind number is ${readFileArray.length}`);
-				jsonfile.writeFileSync(__dirname+"//stockName.json", readFileArray);
-				_fetchInitData(code, function(){
-					if(readFileArray&&readFileArray.length>0){
-						exe();
-					}
-				});
-			}
-
-			exe();
+			
 			/*if(results&&results instanceof Array){
 				var fetchFlag = true;
 				function _fetch(){
