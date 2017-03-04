@@ -12,12 +12,15 @@ function calcMACD({preEma12, preEma26, preDea, price}){
 	//（DIF-DEA）*2
 	var barValue = (dif - dea)*2;
 	return{
-		"dif": dif.toFixed(2),
-		"dea": dea.toFixed(2),
-		"bar": barValue.toFixed(2)
+		"dif": dif,
+		"dea": dea,
+		"bar": barValue,
+		"ema12": ema12,
+		"ema26": ema26,
+		"dif": dif
 	}
 }
-
+/*
 var options = {
   host: 'q.stock.sohu.com',
   port: 80,
@@ -49,6 +52,8 @@ http.get(options, function(response) {
   		console.log(stockObject);
   	});
   });
-});
+});*/
+
+module.exports.calcMACD = calcMACD;
 
 //http://q.stock.sohu.com/hisHq?code=cn_601628&start=19900101&end=20170207&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp&r=0.9310515393362175&0.40358688832404455

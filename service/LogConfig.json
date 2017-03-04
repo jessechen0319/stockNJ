@@ -2,7 +2,7 @@
   "appenders": [
     {
       "type": "file",
-      "filename": "../logs/stock.log",
+      "filename": "./logs/stock.log",
       "maxLogSize": 50480000,
       "backups": 3,
       "category": "relative-logger"

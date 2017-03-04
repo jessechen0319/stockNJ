@@ -82,3 +82,34 @@ CREATE TABLE `t_stock_detail` (
   UNIQUE KEY `uniqui` (`stock_code`,`date`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : 115.159.68.208
+Source Server Version : 80000
+Source Host           : 115.159.68.208:3306
+Source Database       : stock
+
+Target Server Type    : MYSQL
+Target Server Version : 80000
+File Encoding         : 65001
+
+Date: 2017-03-04 11:24:53
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for t_stack_tools
+-- ----------------------------
+DROP TABLE IF EXISTS `t_stack_tools`;
+CREATE TABLE `t_stack_tools` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `detail_id` int(11) NOT NULL,
+  `macd_dif` float DEFAULT NULL,
+  `macd_dea` float DEFAULT NULL,
+  `macd_bar` float DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `f_detail` (`detail_id`),
+  CONSTRAINT `f_detail` FOREIGN KEY (`detail_id`) REFERENCES `t_stock_detail` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

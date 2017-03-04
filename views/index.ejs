@@ -1,64 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="stock">
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<title>Stock</title>
-	<link href="/favicon.ico" rel="icon" type="image/x-icon" />
-	<link rel="stylesheet" href="/stylesheets/index.css">
 </head>
-<body ng-controller="index">
-	<%- include('header.ejs'); %>
-	<div class="date-now">
-		Today is : {{nowDate}}
-	</div>
-	<div class="top-message">
-		we got 88 stocks to buy
-	</div>
-	
-	<div class="panel panel-default margin-header">
-		<div class="panel-heading">trigger and status</div>
-		<div class="panel-body">
-			<table class="table table-bordered table-hover">
-				<tr>
-					<th class="col-xs-3">trigger</th>
-					<th>status</th>
-				</tr>
-				<tr>
-					<td>
-						<button class='btn' >Fetch Name (long time)</button>
-					</td>
-					<td>
-						<div class="progress">
-						  <div class="progress-bar" role="progressbar" aria-valuenow="{{nameProcessPercentage}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{nameProcessPercentage}}%;">
-						    {{nameProcessPercentage}}%
-						  </div>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td><div class="col-sm-4"><button class='btn' ng-disabled="disableFetchStockFlag" ng-click="fetchStockDetail()">Fetch Stock (daily)</button></td>
-					<td>
-						<div class="progress">
-						  <div class="progress-bar" role="progressbar" aria-valuenow="{{stockProcessPercentage}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{stockProcessPercentage}}%;">
-						    {{stockProcessPercentage}}%
-						  </div>
-						</div>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</div>
-
-	<div class="panel panel-default">
-	  <div class="panel-heading">Stock Fetch Calendar</div>
-	  <div class="panel-body">
-	  	<div ng-repeat="date in dateValidations"class="class-valid {{date.valid}}">
-	  		{{date.date}}
-	  	</div>
-	  </div>
-	</div>
+<body>
 	
 </body>
-<script type="text/javascript" src="/js/index.js"></script>
-<script src="/js/ui-bootstrap-custom-2.3.0.min.js"></script>
 </html>
