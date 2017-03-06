@@ -33,11 +33,8 @@ function init(code){
 
     MySqlService.query('select * from t_stock_detail t where t.stock_code=? order by t.date',[code] , function (error, results, fields){
 
-        console.log(results);
-
         var cursor = 1;
 
-        
         var MACDs = [];
 
         //initial MACD parameter
@@ -51,20 +48,26 @@ function init(code){
 
         while(cursor <= results.length-1){
 
+            var analysisObj = {};
+
             var cur = results[cursor];
             priceCache.push(cur.price);
             amountCache.push(cur.amount_stock);
 
             //MACD calculate{
             try{
-                console.log(`parameter-${cacheEma12}-${cacheEma26}-${cacheDea}`);
                 var MACDResult = calculateService.calcMACD({preEma12:cacheEma12, preEma26:cacheEma26, preDea:cacheDea, price:cur.price});
                 cacheDea = MACDResult.dea;
                 cacheEma12 = MACDResult.ema12;
                 cacheEma26 = MACDResult.ema26;
-                console.log(`MACD ${cur.date} - ${MACDResult.bar} - ${MACDResult.dif} - ${MACDResult.dea}`);
+                analysisObj.dea = MACDResult.dea;
+                analysisObj.ema12 = MACDResult.ema12;
+                analysisObj.ema26 = MACDResult.ema26;
+                analysisObj.bar = MACDResult.bar;
+                analysisObj.dif = MACDResult.dif;
             } catch(e){
                 console.log('calculate MACD error');
+                console.log(e);
             }
             //}MACD calculate
 
@@ -79,7 +82,7 @@ function init(code){
                         }
                         priceAverage = priceAverage/item;
                         priceAverage = priceAverage.toFixed(2);
-                        console.log(`average ${cur.date} price_day_${item}:${priceAverage}`);
+                        analysisObj[`price_day_${item}`] = priceAverage;
                     }
                 });
 
@@ -91,7 +94,7 @@ function init(code){
                         }
                         amountAverage = amountAverage/item;
                         amountAverage = amountAverage.toFixed(2);
-                        console.log(`average ${cur.date} amount_day_${item}:${amountAverage}`);
+                        analysisObj[`amount_day_${item}`] = amountAverage;
                     }
                 });
 
@@ -109,20 +112,19 @@ function init(code){
                         average += priceCache[i];
                     }
                     average = average/20;
-                    console.log(`average=${average}`);
                     var averageA = 0;
                     for(var i = priceCache.length-20;i<priceCache.length;i++){
                         averageA += (priceCache[i]-average)*(priceCache[i]-average);
                     }
                     averageA = averageA/20;
                     averageA = Math.sqrt(averageA);
-
-                    console.log(`averageA=${averageA}`);
-
                     var uper = average + 2*averageA;
                     var down = average - 2*averageA;
 
-                    console.log(`BOLL: date=${cur.date}, mid=${average}, uper=${uper}, down=${down}`);
+                    analysisObj.boll_mid = average.toFixed(2);
+                    analysisObj.boll_uper = uper.toFixed(2);
+                    analysisObj.boll_down = down.toFixed(2);
+
                 }
             }catch(e){
                 console.log('calculate BOLL error');
@@ -130,6 +132,7 @@ function init(code){
 
             //BOLL
             
+            console.log(`calculate result for ${cur.stock_code}-${cur.id} at ${cur.date} is ${JSON.stringify(analysisObj)}`);
             
             cursor++;
         }

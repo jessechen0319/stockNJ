@@ -16,8 +16,7 @@ function calcMACD({preEma12, preEma26, preDea, price}){
 		"dea": dea.toFixed(2),
 		"bar": barValue.toFixed(2),
 		"ema12": ema12.toFixed(2),
-		"ema26": ema26.toFixed(2),
-		"dif": dif.toFixed(2)
+		"ema26": ema26.toFixed(2)
 	}
 }
 /*
