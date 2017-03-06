@@ -62,7 +62,7 @@ function init(code){
                 cacheDea = MACDResult.dea;
                 cacheEma12 = MACDResult.ema12;
                 cacheEma26 = MACDResult.ema26;
-                console.log(`${cur.date} - ${MACDResult.bar} - ${MACDResult.dif} - ${MACDResult.dea}`);
+                console.log(`MACD ${cur.date} - ${MACDResult.bar} - ${MACDResult.dif} - ${MACDResult.dea}`);
             } catch(e){
                 console.log('calculate MACD error');
             }
@@ -78,6 +78,7 @@ function init(code){
                             priceAverage += priceCache[i];
                         }
                         priceAverage = priceAverage/item;
+                        priceAverage = priceAverage.toFixed(2);
                         console.log(`average ${cur.date} price_day_${item}:${priceAverage}`);
                     }
                 });
@@ -89,6 +90,7 @@ function init(code){
                             amountAverage += amountCache[i];
                         }
                         amountAverage = amountAverage/item;
+                        amountAverage = amountAverage.toFixed(2);
                         console.log(`average ${cur.date} amount_day_${item}:${amountAverage}`);
                     }
                 });
@@ -104,15 +106,18 @@ function init(code){
                 if(priceCache.length>=20){
                     var average = 0;
                     for(var i = priceCache.length-20;i<priceCache.length;i++){
-                        average += priceCache[i].price;
+                        average += priceCache[i];
                     }
                     average = average/20;
+                    console.log(`average=${average}`);
                     var averageA = 0;
                     for(var i = priceCache.length-20;i<priceCache.length;i++){
-                        averageA += (priceCache[i].price-average)*(priceCache[i].price-average);
+                        averageA += (priceCache[i]-average)*(priceCache[i]-average);
                     }
                     averageA = averageA/20;
                     averageA = Math.sqrt(averageA);
+
+                    console.log(`averageA=${averageA}`);
 
                     var uper = average + 2*averageA;
                     var down = average - 2*averageA;
