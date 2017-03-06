@@ -12,12 +12,12 @@ function calcMACD({preEma12, preEma26, preDea, price}){
 	//（DIF-DEA）*2
 	var barValue = (dif - dea)*2;
 	return{
-		"dif": dif,
-		"dea": dea,
-		"bar": barValue,
-		"ema12": ema12,
-		"ema26": ema26,
-		"dif": dif
+		"dif": dif.toFixed(2),
+		"dea": dea.toFixed(2),
+		"bar": barValue.toFixed(2),
+		"ema12": ema12.toFixed(2),
+		"ema26": ema26.toFixed(2),
+		"dif": dif.toFixed(2)
 	}
 }
 /*

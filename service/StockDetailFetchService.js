@@ -29,7 +29,7 @@ var stockDetailService = (function(){
 		return analysisObject;
 	}
 
-	function _fetchData(code, market, isLast, jobId){
+	function _fetchData(code, market, isLast, jobId, callback){
 		var URL = `/list=${market}${code}`;
 		Util.fetchPath({"host": 'hq.sinajs.cn', "path": URL, "callback": function(data, err){
 
@@ -40,7 +40,10 @@ var stockDetailService = (function(){
 				  if (err){
 				  	logger.error(err);
 				  }
+				  callback();
 				});
+			} else {
+				callback();
 			}
 		}});
 
@@ -165,21 +168,34 @@ var stockDetailService = (function(){
 
 	function fetchDetail(jobId){
 		MySqlService.query('select * from t_stock_name', function (error, results, fields) {
-		
+
 			if(error){
 				throw error;
 			}
 
-			logger.info(`query finished, ${fields}`);
-
 			jobService.updateJobRunning(jobId);
-
-			if(results&&results instanceof Array){
-				results.forEach(function(item, index){
-					var isLast = (index == (results.length-1));
-					setTimeout(function(){_fetchData(item.code, item.market, isLast, jobId)}, 2000*index);
+			jsonfile.writeFileSync(__dirname+"//stockName.json", results);
+			function exe(){
+				var readFileArray = jsonfile.readFileSync(__dirname+"//stockName.json");
+				var item = readFileArray.shift();
+				logger.info(`start execute: ${code} - remind number is ${readFileArray.length}`);
+				jsonfile.writeFileSync(__dirname+"//stockName.json", readFileArray);
+				_fetchData(item.code, item.market, isLast, jobId, function(){
+					if(readFileArray&&readFileArray.length>0){
+						exe();
+					}
 				});
 			}
+
+			exe();
+			/*if(results&&results instanceof Array){
+				results.forEach(function(item, index){
+					var isLast = (index == (results.length-1));
+					_fetchData(item.code, item.market, isLast, jobId, function(){
+
+					});
+				});
+			}*/
 		});
 	}
 
