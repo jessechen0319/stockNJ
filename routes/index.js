@@ -16,6 +16,17 @@ router.get('/', function(req, res, next) {
 	res.render('index', { title: 'Express' });
 });
 
+router.get('/manualFetch', function(req, res, next) {
+	
+	var jobService = new JobService();
+	jobService.createJob(2, function(err, jobId){
+	if(err){
+	} else {
+		StockDetailFetchService.fetchDetail(jobId);
+	}
+	}, "Daily Job fetching");
+});
+
 router.get('/getProcessRate', function(req, res, next) {
 
 	var jobService = new JobService();

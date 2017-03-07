@@ -119,31 +119,25 @@ var stockDetailService = (function(){
 
 	function fetchInit(jobId){
 
-		MySqlService.query('select * from t_stock_name', function (error, results, fields) {
-		
-			if(error){
-				throw error;
+
+		jobService.updateJobRunning(jobId);
+
+		MySqlService.query('select * from t_stock_name', function (error, results, fields){
+
+			jsonfile.writeFileSync(__dirname+"//stockName.json", results);
+			function exe(){
+				var readFileArray = jsonfile.readFileSync(__dirname+"//stockName.json");
+				var code = readFileArray.shift().code;
+				logger.info(`start execute: ${code} - remind number is ${readFileArray.length}`);
+				jsonfile.writeFileSync(__dirname+"//stockName.json", readFileArray);
+				_fetchInitData(code, function(){
+					if(readFileArray&&readFileArray.length>0){
+						exe();
+					}
+				});
 			}
 
-			jobService.updateJobRunning(jobId);
-
-			MySqlService.query('select * from t_stock_name', function (error, results, fields){
-
-				jsonfile.writeFileSync(__dirname+"//stockName.json", results);
-				function exe(){
-					var readFileArray = jsonfile.readFileSync(__dirname+"//stockName.json");
-					var code = readFileArray.shift().code;
-					logger.info(`start execute: ${code} - remind number is ${readFileArray.length}`);
-					jsonfile.writeFileSync(__dirname+"//stockName.json", readFileArray);
-					_fetchInitData(code, function(){
-						if(readFileArray&&readFileArray.length>0){
-							exe();
-						}
-					});
-				}
-
-				exe();
-			});
+			exe();
 
 			
 			/*if(results&&results instanceof Array){
@@ -173,6 +167,8 @@ var stockDetailService = (function(){
 				throw error;
 			}
 
+			var that = this;
+
 			jobService.updateJobRunning(jobId);
 			jsonfile.writeFileSync(__dirname+"//stockName.json", results);
 			function exe(){
@@ -180,9 +176,9 @@ var stockDetailService = (function(){
 				var item = readFileArray.shift();
 				logger.info(`start execute: ${code} - remind number is ${readFileArray.length}`);
 				jsonfile.writeFileSync(__dirname+"//stockName.json", readFileArray);
-				_fetchData(item.code, item.market, isLast, jobId, function(){
+				_fetchData(item.code, item.market, readFileArray.length==0, jobId, function(){
 					if(readFileArray&&readFileArray.length>0){
-						exe();
+						exe.apply(that);
 					}
 				});
 			}
