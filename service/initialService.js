@@ -84,6 +84,11 @@ function init(code, callback){
 
         var MACDs = [];
 
+        if(!results||results.length == 0){
+            console.log('no record found for:'+ code);
+            callback([]);
+        }
+
         //initial MACD parameter
         var cacheEma12 = results[0].price, cacheEma26=results[0].price, cacheDea=0;
 
