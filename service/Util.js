@@ -1,6 +1,16 @@
 var http = require('http');
+var fs = require('fs');
 
 var Util = (function(){
+
+	function generateCurrentDate(){
+		var now = new Date();
+		let year = now.getFullYear();
+		let month = now.getMonth()+1;
+		let day = now.getDate();
+		let result = `${year}-${month}-${day}`;
+		return result;
+	}
 
 	function generateMySqlDate(date){
 
@@ -38,9 +48,28 @@ var Util = (function(){
 	    });
 	}
 
+	function removeDir(path) {
+
+    var files = [];
+    if( fs.existsSync(path) ) {
+        files = fs.readdirSync(path);
+        files.forEach(function(file,index){
+            var curPath = path + "/" + file;
+            if(fs.statSync(curPath).isDirectory()) { // recurse
+                removeDir(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};
+
 	return {"pad": pad,
 			"fetchPath": fetchPath,
-			"generateMySqlDate": generateMySqlDate
+			"generateMySqlDate": generateMySqlDate,
+			"generateCurrentDate":generateCurrentDate,
+			"removeDir":removeDir
 			};
 })();
 

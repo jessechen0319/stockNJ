@@ -2,8 +2,9 @@ var MySqlService = require("./MySqlService");
 var fs = require('fs');
 var jsonfile = require('jsonfile');
 var calculateService = require('./CalculateService');
+var UTIL = require("./Util");
 
-function initStockNameJson(callback){
+/*function initStockNameJson(callback){
 
     MySqlService.query('select * from t_stock_name', function (error, results, fields){
 
@@ -27,9 +28,55 @@ function initialAverage(callback){
             console.log('initial finish');
         }
     });
+}*/
+
+function initialStocks(){
+
+    UTIL.removeDir(__dirname+"//stockDetail");
+    fs.mkdir(__dirname+"//stockDetail");
+
+    MySqlService.query('select * from t_stock_name', function (error, results, fields){
+        jsonfile.writeFileSync(__dirname+"//stockName.json", results);
+        var stocks = jsonfile.readFileSync(__dirname+"//stockName.json");
+        var that = this;
+
+        function process(){
+            var stock = stocks.shift();
+            jsonfile.writeFileSync(__dirname+"//stockName.json", stocks);
+
+            console.log(`processing for ${stock.code} start+++`);
+            init(stock.code, function(results){
+                console.log(`processing for ${stock.code} finish---`);
+                let dateString = UTIL.generateCurrentDate();
+                jsonfile.writeFileSync(`${__dirname}//stockDetail//stock_${stock.code}_${dateString}.json`, results);
+                process.call(that);
+            });
+            stocks = jsonfile.readFileSync(__dirname+"//stockName.json");
+        }
+
+        process();
+
+        /*while(stocks && stocks.length>0){
+            var stock = stocks.shift();
+            jsonfile.writeFileSync(__dirname+"//stockName.json", stocks);
+
+            //main logic
+            console.log(`processing for ${stock.code} start+++`);
+            init(stock.code, function(results){
+                console.log(`processing for ${stock.code} finish---`);
+                let dateString = UTIL.generateCurrentDate();
+                jsonfile.writeFileSync(`${__dirname}//stockDetail//stock_${stock.code}_${dateString}.json`, results);
+            });
+
+            //end main logic
+
+            stocks = jsonfile.readFileSync(__dirname+"//stockName.json");
+        }*/
+
+    });
 }
 
-function init(code){
+function init(code, callback){
 
     MySqlService.query('select * from t_stock_detail t where t.stock_code=? order by t.date',[code] , function (error, results, fields){
 
@@ -44,6 +91,8 @@ function init(code){
         var priceCache = [];
         var amountCache = [];
         var averageDefine = [10,20,30,60,120,250,13,34,55,89,144];
+
+        var returnValues = [];
 
 
         while(cursor <= results.length-1){
@@ -131,14 +180,15 @@ function init(code){
             }
 
             //BOLL
-            
-            console.log(`calculate result for ${cur.stock_code}-${cur.id} at ${cur.date} is ${JSON.stringify(analysisObj)}`);
-            
+
+            analysisObj.code = cur.stock_code;
+            analysisObj.date = cur.date;
+            returnValues.push(analysisObj);
             cursor++;
         }
 
-
+        callback(returnValues);
     });
 }
 
-init('002828');
+initialStocks();
