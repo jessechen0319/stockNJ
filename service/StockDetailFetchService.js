@@ -40,10 +40,12 @@ var stockDetailService = (function(){
 				  if (err){
 				  	logger.error(err);
 				  }
-				  callback();
+				  logger.info('do the callback after store');
+				  setTimeout(callback, 1000);
 				});
 			} else {
-				callback();
+				logger.info('do the callback before store');
+				setTimeout(callback, 1000);
 			}
 		}});
 
@@ -138,25 +140,6 @@ var stockDetailService = (function(){
 			}
 
 			exe();
-
-			
-			/*if(results&&results instanceof Array){
-				var fetchFlag = true;
-				function _fetch(){
-					var result = results.shift();
-					let code = result.code;
-					logger.info('starting insert record: '+ code);
-					_fetchInitData(code, function(){
-						if(results.length != 0){
-							setTimeout(function(){_fetch()}, 3000);
-						} else {
-							logger.info('fetch init finished.');
-							
-						}
-					});
-				}
-				setTimeout(function(){_fetch()}, 3000);
-			}*/
 		});
 	}
 
@@ -174,7 +157,7 @@ var stockDetailService = (function(){
 			function exe(){
 				var readFileArray = jsonfile.readFileSync(__dirname+"//stockName.json");
 				var item = readFileArray.shift();
-				logger.info(`start execute: ${code} - remind number is ${readFileArray.length}`);
+				logger.info(`start execute: ${item.code} - remind number is ${readFileArray.length}`);
 				jsonfile.writeFileSync(__dirname+"//stockName.json", readFileArray);
 				_fetchData(item.code, item.market, readFileArray.length==0, jobId, function(){
 					if(readFileArray&&readFileArray.length>0){
