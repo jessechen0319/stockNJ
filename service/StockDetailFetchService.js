@@ -62,7 +62,8 @@ var stockDetailService = (function(){
 			var that = this;
 
 			if(err){
-				logger.error(JSON.stringify(err));			
+				logger.error(JSON.stringify(err));	
+				callback();		
 			} else {
 				try{
 					var data = JSON.parse(data.slice(21, data.length-2));

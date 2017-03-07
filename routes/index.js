@@ -16,15 +16,30 @@ router.get('/', function(req, res, next) {
 	res.render('index', { title: 'Express' });
 });
 
+router.get('/manualInitFetch', function(req, res, next) {
+	
+	var jobService = new JobService();
+	jobService.createJob(2, function(err, jobId){
+		if(err){
+		} else {
+			StockDetailFetchService.fetchInit(jobId);
+		}
+	}, "initial Job fetching");
+	res.end('initial fetch started');
+
+});
+
 router.get('/manualFetch', function(req, res, next) {
 	
 	var jobService = new JobService();
 	jobService.createJob(2, function(err, jobId){
-	if(err){
-	} else {
-		StockDetailFetchService.fetchDetail(jobId);
-	}
+		if(err){
+		} else {
+			StockDetailFetchService.fetchDetail(jobId);
+		}
 	}, "Daily Job fetching");
+	res.end('daily fetch started');
+
 });
 
 router.get('/getProcessRate', function(req, res, next) {
