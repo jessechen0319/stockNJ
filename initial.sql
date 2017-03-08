@@ -94,7 +94,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80000
 File Encoding         : 65001
 
-Date: 2017-03-04 11:24:53
+Date: 2017-03-08 22:04:08
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -106,10 +106,38 @@ DROP TABLE IF EXISTS `t_stack_tools`;
 CREATE TABLE `t_stack_tools` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `detail_id` int(11) NOT NULL,
-  `macd_dif` float DEFAULT NULL,
-  `macd_dea` float DEFAULT NULL,
-  `macd_bar` float DEFAULT NULL,
+  `macd_dif` float(10,2) DEFAULT NULL,
+  `macd_dea` float(10,2) DEFAULT NULL,
+  `macd_bar` float(10,2) DEFAULT NULL,
+  `macd_ema12` float(10,2) DEFAULT NULL,
+  `macd_ema26` float(10,2) DEFAULT NULL,
+  `price_day_10` float(255,2) DEFAULT NULL,
+  `price_day_20` float(255,2) DEFAULT NULL,
+  `price_day_30` float(255,2) DEFAULT NULL,
+  `price_day_60` float(255,2) DEFAULT NULL,
+  `price_day_120` float(255,2) DEFAULT NULL,
+  `price_day_250` float(255,2) DEFAULT NULL,
+  `price_day_13` float(255,2) DEFAULT NULL,
+  `price_day_34` float(255,2) DEFAULT NULL,
+  `price_day_55` float(255,2) DEFAULT NULL,
+  `price_day_89` float(255,2) DEFAULT NULL,
+  `amount_day_10` float(255,2) DEFAULT NULL,
+  `price_day_144` float(255,2) DEFAULT NULL,
+  `amount_day_20` float(255,2) DEFAULT NULL,
+  `amount_day_30` float(255,2) DEFAULT NULL,
+  `amount_day_60` float(255,2) DEFAULT NULL,
+  `amount_day_120` float(255,2) DEFAULT NULL,
+  `amount_day_250` float(255,2) DEFAULT NULL,
+  `amount_day_13` float(255,2) DEFAULT NULL,
+  `amount_day_34` float(255,2) DEFAULT NULL,
+  `amount_day_55` float(255,2) DEFAULT NULL,
+  `amount_day_89` float(255,2) DEFAULT NULL,
+  `amount_day_144` float(255,2) DEFAULT NULL,
+  `stock_code` varchar(255) NOT NULL,
+  `boll_mid` float(255,2) DEFAULT NULL,
+  `date` datetime NOT NULL,
+  `boll_uper` float(255,2) DEFAULT NULL,
+  `boll_down` float(255,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `f_detail` (`detail_id`),
-  CONSTRAINT `f_detail` FOREIGN KEY (`detail_id`) REFERENCES `t_stock_detail` (`id`)
+  KEY `f_detail_id` (`detail_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
