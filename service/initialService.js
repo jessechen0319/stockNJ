@@ -47,8 +47,6 @@ function initialStocks(){
             console.log(`processing for ${stock.code} start+++`);
             init(stock.code, function(results){
                 console.log(`processing for ${stock.code} finish---`);
-                let dateString = UTIL.generateCurrentDate();
-                jsonfile.writeFileSync(`${__dirname}//stockDetail//stock_${stock.code}_${dateString}.json`, results);
                 process.call(that);
             });
             stocks = jsonfile.readFileSync(__dirname+"//stockName.json");
@@ -103,7 +101,6 @@ function init(code, callback){
         while(cursor <= results.length-1){
 
             var analysisObj = {};
-
             var cur = results[cursor];
             priceCache.push(cur.price);
             amountCache.push(cur.amount_stock);
@@ -114,11 +111,11 @@ function init(code, callback){
                 cacheDea = MACDResult.dea;
                 cacheEma12 = MACDResult.ema12;
                 cacheEma26 = MACDResult.ema26;
-                analysisObj.dea = MACDResult.dea;
-                analysisObj.ema12 = MACDResult.ema12;
-                analysisObj.ema26 = MACDResult.ema26;
-                analysisObj.bar = MACDResult.bar;
-                analysisObj.dif = MACDResult.dif;
+                analysisObj.macd_dea = MACDResult.dea;
+                analysisObj.macd_ema12 = MACDResult.ema12;
+                analysisObj.macd_ema26 = MACDResult.ema26;
+                analysisObj.macd_bar = MACDResult.bar;
+                analysisObj.macd_dif = MACDResult.dif;
             } catch(e){
                 console.log('calculate MACD error');
                 console.log(e);
@@ -186,14 +183,49 @@ function init(code, callback){
 
             //BOLL
 
-            analysisObj.code = cur.stock_code;
-            analysisObj.date = cur.date;
+            var processDate = new Date(cur.date);
+            analysisObj.detail_id = cur.id;
+            analysisObj.stock_code = cur.stock_code;
+            analysisObj.date = processDate.toLocaleDateString();
             returnValues.push(analysisObj);
             cursor++;
         }
 
-        callback(returnValues);
+        returnValues.forEach(function(record, index){
+            var sql = 'insert into t_stock_tools (';
+            var values = 'values (';
+            var insertValues = [];
+            Object.keys(record).forEach(function(key, index){
+                sql += key;
+                insertValues.push(record[key]);
+                if(index < Object.keys(record).length -1 ){
+                    sql += ', ';
+                    values += '?, ';
+                } else {
+                    sql += ') ';
+                    values += '?) ';
+                }
+            });
+
+            MySqlService.query(sql + values, insertValues, function(err, result) {
+                if(err){
+                    console.log(err);
+                }
+            });
+
+            if(index == returnValues.length-1){
+                callback(returnValues);
+            }
+            //console.log(`sql is ${sql + values}`);
+        });
+
+        
     });
 }
+
+/*init('002828', function(values){
+    //console.log(values);
+    console.log('fetch finish');
+});*/
 
 initialStocks();
