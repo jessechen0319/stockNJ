@@ -228,4 +228,4 @@ function init(code, callback){
     console.log('fetch finish');
 });*/
 
-initialStocks();
+module.exports.initialStocks = initialStocks;

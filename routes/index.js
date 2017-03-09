@@ -10,10 +10,17 @@ var stackAnalysisService = new StockAnalysisService();
 
 var StockDetailFetchService = require("../service/StockDetailFetchService");
 var JobService = require("../service/JobService");
+var InitialService = require("../service/InitialService");
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	
 	res.render('index', { title: 'Express' });
+});
+
+router.get('/manualIndex', function(req, res, next) {
+
+	InitialService.initialStocks();
+	res.end('initial fetch index started');
 });
 
 router.get('/manualInitFetch', function(req, res, next) {
