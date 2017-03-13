@@ -10,7 +10,7 @@ var stackAnalysisService = new StockAnalysisService();
 
 var StockDetailFetchService = require("../service/StockDetailFetchService");
 var JobService = require("../service/JobService");
-var InitialService = require("../service/InitialService");
+var InitialService = require("../service/initialService");
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	

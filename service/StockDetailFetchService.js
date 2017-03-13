@@ -154,12 +154,12 @@ var stockDetailService = (function(){
 			var that = this;
 
 			jobService.updateJobRunning(jobId);
-			jsonfile.writeFileSync(__dirname+"//stockName.json", results);
+			jsonfile.writeFileSync(__dirname+"//stockName_daily.json", results);
 			function exe(){
-				var readFileArray = jsonfile.readFileSync(__dirname+"//stockName.json");
+				var readFileArray = jsonfile.readFileSync(__dirname+"//stockName_daily.json");
 				var item = readFileArray.shift();
 				logger.info(`start execute: ${item.code} - remind number is ${readFileArray.length}`);
-				jsonfile.writeFileSync(__dirname+"//stockName.json", readFileArray);
+				jsonfile.writeFileSync(__dirname+"//stockName_daily.json", readFileArray);
 				_fetchData(item.code, item.market, readFileArray.length==0, jobId, function(){
 					if(readFileArray&&readFileArray.length>0){
 						exe.apply(that);

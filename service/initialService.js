@@ -269,4 +269,3 @@ function init(code, callback){
 });*/
 
 module.exports.initialStocks = initialStocks;
-initialStocks();
