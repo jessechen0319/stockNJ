@@ -3,7 +3,7 @@ var fs = require('fs');
 var jsonfile = require('jsonfile');
 var calculateService = require('./CalculateService');
 var UTIL = require("./Util");
-
+var logger = require('./LogService');
 /*function initStockNameJson(callback){
 
     MySqlService.query('select * from t_stock_name', function (error, results, fields){
@@ -25,7 +25,7 @@ function initialAverage(callback){
                 initialAverage(callback);
             });
         } else {
-            console.log('initial finish');
+            logger.info('initial finish');
         }
     });
 }*/
@@ -44,9 +44,9 @@ function initialStocks(){
             var stock = stocks.shift();
             jsonfile.writeFileSync(__dirname+"//stockName.json", stocks);
 
-            console.log(`processing for ${stock.code} start+++`);
+            logger.info(`processing for ${stock.code} start+++`);
             init(stock.code, function(results){
-                console.log(`processing for ${stock.code} finish---`);
+                logger.info(`processing for ${stock.code} finish---`);
                 process.call(that);
             });
             stocks = jsonfile.readFileSync(__dirname+"//stockName.json");
@@ -59,9 +59,9 @@ function initialStocks(){
             jsonfile.writeFileSync(__dirname+"//stockName.json", stocks);
 
             //main logic
-            console.log(`processing for ${stock.code} start+++`);
+            logger.info(`processing for ${stock.code} start+++`);
             init(stock.code, function(results){
-                console.log(`processing for ${stock.code} finish---`);
+                logger.info(`processing for ${stock.code} finish---`);
                 let dateString = UTIL.generateCurrentDate();
                 jsonfile.writeFileSync(`${__dirname}//stockDetail//stock_${stock.code}_${dateString}.json`, results);
             });
@@ -83,7 +83,7 @@ function init(code, callback){
         var MACDs = [];
 
         if(!results||results.length == 0){
-            console.log('no record found for:'+ code);
+            logger.error('no record found for:'+ code);
             callback([]);
         }
 
@@ -117,8 +117,8 @@ function init(code, callback){
                 analysisObj.macd_bar = MACDResult.bar;
                 analysisObj.macd_dif = MACDResult.dif;
             } catch(e){
-                console.log('calculate MACD error');
-                console.log(e);
+                logger.info('calculate MACD error');
+                logger.info(e);
             }
             //}MACD calculate
 
@@ -150,7 +150,7 @@ function init(code, callback){
                 });
 
             }catch(e){
-                console.log('calculate average error');
+                logger.info('calculate average error');
             }
             //average
 
@@ -178,20 +178,26 @@ function init(code, callback){
 
                 }
             }catch(e){
-                console.log('calculate BOLL error');
+                logger.info('calculate BOLL error');
             }
 
             //BOLL
-
-            var processDate = new Date(cur.date);
+            var date1 = new Date(cur.date);
+            let year = date1.getFullYear();
+            let month = date1.getMonth()+1;
+            let day = date1.getDate();
+            let result = `${year}-${month}-${day}`;
+            var date2 = new Date(result);
             analysisObj.detail_id = cur.id;
             analysisObj.stock_code = cur.stock_code;
-            analysisObj.date = processDate.toLocaleDateString();
+            analysisObj.date = UTIL.generateMySqlDate(date2);
             returnValues.push(analysisObj);
             cursor++;
         }
 
-        returnValues.forEach(function(record, index){
+        var that=this;
+        function run(callback2){
+            var record = returnValues.shift();
             var sql = 'insert into t_stock_tools (';
             var values = 'values (';
             var insertValues = [];
@@ -209,23 +215,58 @@ function init(code, callback){
 
             MySqlService.query(sql + values, insertValues, function(err, result) {
                 if(err){
-                    console.log(err);
+                    logger.info(err);
+                }
+                if(returnValues.length == 0){
+                    callback2(true);
+                } else {
+                    run.apply(that, [callback2]);
+                }
+            });
+        }
+
+        run.apply(that, [function(isLastOne){
+            if(isLastOne){
+                callback();
+            }
+        }]);
+
+        /*returnValues.forEach(function(record, index){
+            var sql = 'insert into t_stock_tools (';
+            var values = 'values (';
+            var insertValues = [];
+            Object.keys(record).forEach(function(key, index){
+                sql += key;
+                insertValues.push(record[key]);
+                if(index < Object.keys(record).length -1 ){
+                    sql += ', ';
+                    values += '?, ';
+                } else {
+                    sql += ') ';
+                    values += '?) ';
+                }
+            });
+
+            MySqlService.query(sql + values, insertValues, function(err, result) {
+                if(err){
+                    logger.info(err);
                 }
             });
 
             if(index == returnValues.length-1){
                 callback(returnValues);
             }
-            //console.log(`sql is ${sql + values}`);
-        });
+            //logger.info(`sql is ${sql + values}`);
+        });*/
 
         
     });
 }
 
 /*init('002828', function(values){
-    //console.log(values);
-    console.log('fetch finish');
+    //logger.info(values);
+    logger.info('fetch finish');
 });*/
 
 module.exports.initialStocks = initialStocks;
+initialStocks();
