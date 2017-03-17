@@ -74,6 +74,60 @@ function initialStocks(){
     });
 }
 
+function initInsertObject(){
+
+    var returnValue = {};
+    returnValue.macd_dif = 0;
+    returnValue.macd_dea = 0;
+    returnValue.macd_bar = 0;
+    returnValue.macd_ema12 = 0;
+    returnValue.macd_ema26 = 0;
+    returnValue.price_day_10 = 0;
+    returnValue.price_day_20 = 0;
+    returnValue.price_day_30 = 0;
+    returnValue.price_day_60 = 0;
+    returnValue.price_day_120 = 0;
+    returnValue.price_day_250 = 0;
+    returnValue.price_day_13 = 0;
+    returnValue.price_day_34 = 0;
+    returnValue.price_day_55 = 0;
+    returnValue.price_day_89 = 0;
+    returnValue.amount_day_10 = 0;
+    returnValue.price_day_144 = 0;
+    returnValue.amount_day_20 = 0;
+    returnValue.amount_day_30 = 0;
+    returnValue.amount_day_60 = 0;
+    returnValue.amount_day_120 = 0;
+    returnValue.amount_day_250 = 0;
+    returnValue.amount_day_13 = 0;
+    returnValue.amount_day_34 = 0;
+    returnValue.amount_day_55 = 0;
+    returnValue.amount_day_89 = 0;
+    returnValue.amount_day_144 = 0;
+    returnValue.boll_mid=0;
+    returnValue.boll_uper=0;
+    returnValue.boll_down=0;
+    return returnValue;
+}
+
+function makeParameterInOrder(objects){
+
+    var parameters = [];
+    objects.forEach(function(item){
+        var parameterRow = [item.detail_id, item.macd_dif, item.macd_dea, item.macd_bar, item.macd_ema12, item.macd_ema26, item.price_day_10, item.price_day_20, item.price_day_30, item.price_day_60, item.price_day_120, item.price_day_250, item.price_day_13, item.price_day_34, item.price_day_55, item.price_day_89, item.amount_day_10, item.price_day_144, item.amount_day_20, item.amount_day_30, item.amount_day_60, item.amount_day_120, item.amount_day_250, item.amount_day_13, item.amount_day_34, item.amount_day_55, item.amount_day_89, item.amount_day_144, item.boll_mid, item.boll_uper, item.boll_down, item.stock_code, item.date];
+        var legal = parameterRow.every(function(value){
+            if(!value){
+                logger.error(`row for ${item.stocks} at ${item.date} is not correct: ${item}`);
+                return false;
+            } else {
+                return true;
+            }
+        });
+        legal?parameters.push(parameterRow):"";
+    });
+    return parameters;
+}
+
 function init(code, callback){
 
     MySqlService.query('select * from t_stock_detail t where t.stock_code=? order by t.date',[code] , function (error, results, fields){
@@ -100,7 +154,7 @@ function init(code, callback){
 
         while(cursor <= results.length-1){
 
-            var analysisObj = {};
+            var analysisObj = initInsertObject();
             var cur = results[cursor];
             priceCache.push(cur.price);
             amountCache.push(cur.amount_stock);
@@ -195,7 +249,18 @@ function init(code, callback){
             cursor++;
         }
 
-        var that=this;
+        var values = makeParameterInOrder(returnValues);
+
+        var sql = "insert into t_stock_tools (detail_idmacd_difmacd_deamacd_barmacd_ema12macd_ema26price_day_10price_day_20price_day_30price_day_60price_day_120price_day_250price_day_13price_day_34price_day_55price_day_89amount_day_10price_day_144amount_day_20amount_day_30amount_day_60amount_day_120amount_day_250amount_day_13amount_day_34amount_day_55amount_day_89amount_day_144boll_midboll_uperboll_downstock_codedate) values ?";
+        
+        MySqlService.query(sql, values, function(err, result) {
+            if(err){
+                logger.info(err);
+            }
+            callback();
+        });
+
+        /*var that=this;
         function run(callback2){
             var record = returnValues.shift();
             var sql = 'insert into t_stock_tools (';
@@ -229,7 +294,7 @@ function init(code, callback){
             if(isLastOne){
                 callback();
             }
-        }]);
+        }]);*/
 
         /*returnValues.forEach(function(record, index){
             var sql = 'insert into t_stock_tools (';
