@@ -5,7 +5,8 @@ var pool  = mysql.createPool({
   host            : '115.159.68.208',
   user            : 'root',
   password        : 'christianjesse',
-  database        : 'stock'
+  database        : 'stock',
+  timezone: 'utc'
 });
  
 /*connection.connect();

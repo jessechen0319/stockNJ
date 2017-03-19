@@ -77,41 +77,52 @@ function initialStocks(){
 function initInsertObject(){
 
     var returnValue = {};
-    returnValue.macd_dif = 0;
-    returnValue.macd_dea = 0;
-    returnValue.macd_bar = 0;
-    returnValue.macd_ema12 = 0;
-    returnValue.macd_ema26 = 0;
-    returnValue.price_day_10 = 0;
-    returnValue.price_day_20 = 0;
-    returnValue.price_day_30 = 0;
-    returnValue.price_day_60 = 0;
-    returnValue.price_day_120 = 0;
-    returnValue.price_day_250 = 0;
-    returnValue.price_day_13 = 0;
-    returnValue.price_day_34 = 0;
-    returnValue.price_day_55 = 0;
-    returnValue.price_day_89 = 0;
-    returnValue.amount_day_10 = 0;
-    returnValue.price_day_144 = 0;
-    returnValue.amount_day_20 = 0;
-    returnValue.amount_day_30 = 0;
-    returnValue.amount_day_60 = 0;
-    returnValue.amount_day_120 = 0;
-    returnValue.amount_day_250 = 0;
-    returnValue.amount_day_13 = 0;
-    returnValue.amount_day_34 = 0;
-    returnValue.amount_day_55 = 0;
-    returnValue.amount_day_89 = 0;
-    returnValue.amount_day_144 = 0;
-    returnValue.boll_mid=0;
-    returnValue.boll_uper=0;
-    returnValue.boll_down=0;
+    returnValue.macd_dif = '0';
+    returnValue.macd_dea = '0';
+    returnValue.macd_bar = '0';
+    returnValue.macd_ema12 = '0';
+    returnValue.macd_ema26 = '0';
+    returnValue.price_day_10 = '0';
+    returnValue.price_day_20 = '0';
+    returnValue.price_day_30 = '0';
+    returnValue.price_day_60 = '0';
+    returnValue.price_day_120 = '0';
+    returnValue.price_day_250 = '0';
+    returnValue.price_day_13 = '0';
+    returnValue.price_day_34 = '0';
+    returnValue.price_day_55 = '0';
+    returnValue.price_day_89 = '0';
+    returnValue.amount_day_10 = '0';
+    returnValue.price_day_144 = '0';
+    returnValue.amount_day_20 = '0';
+    returnValue.amount_day_30 = '0';
+    returnValue.amount_day_60 = '0';
+    returnValue.amount_day_120 = '0';
+    returnValue.amount_day_250 = '0';
+    returnValue.amount_day_13 = '0';
+    returnValue.amount_day_34 = '0';
+    returnValue.amount_day_55 = '0';
+    returnValue.amount_day_89 = '0';
+    returnValue.amount_day_144 = '0';
+    returnValue.boll_mid='0';
+    returnValue.boll_uper='0';
+    returnValue.boll_down='0';
     return returnValue;
 }
 
 function makeParameterInOrder(objects){
 
+    var parameters = '';
+    objects.forEach(function(item, index){
+        var parameters = parameters + ` (\"${item.detail_id}\", \"${item.macd_dif}\", \"${item.macd_dea}\", \"${item.macd_bar}\", \"${item.macd_ema12}\", \"${item.macd_ema26}\", \"${item.price_day_10}\", \"${item.price_day_20}\", \"${item.price_day_30}\", \"${item.price_day_60}\", \"${item.price_day_120}\", \"${item.price_day_250}\", \"${item.price_day_13}\", \"${item.price_day_34}\", \"${item.price_day_55}\", \"${item.price_day_89}\", \"${item.amount_day_10}\", \"${item.price_day_144}\", \"${item.amount_day_20}\", \"${item.amount_day_30}\", \"${item.amount_day_60}\", \"${item.amount_day_120}\", \"${item.amount_day_250}\", \"${item.amount_day_13}\", \"${item.amount_day_34}\", \"${item.amount_day_55}\", \"${item.amount_day_89}\", \"${item.amount_day_144}\", \"${item.boll_mid}\", \"${item.boll_uper}\", \"${item.boll_down}\", \"${item.stock_code}\", \"${item.date}\")`;
+        if(index != objects.length-1){
+            parameters = parameters + ', ';
+        }
+    });
+    return parameters;
+}
+
+function generateValues(objects){
     var parameters = [];
     objects.forEach(function(item){
         var parameterRow = [item.detail_id, item.macd_dif, item.macd_dea, item.macd_bar, item.macd_ema12, item.macd_ema26, item.price_day_10, item.price_day_20, item.price_day_30, item.price_day_60, item.price_day_120, item.price_day_250, item.price_day_13, item.price_day_34, item.price_day_55, item.price_day_89, item.amount_day_10, item.price_day_144, item.amount_day_20, item.amount_day_30, item.amount_day_60, item.amount_day_120, item.amount_day_250, item.amount_day_13, item.amount_day_34, item.amount_day_55, item.amount_day_89, item.amount_day_144, item.boll_mid, item.boll_uper, item.boll_down, item.stock_code, item.date];
@@ -237,24 +248,29 @@ function init(code, callback){
 
             //BOLL
             var date1 = new Date(cur.date);
-            let year = date1.getFullYear();
-            let month = date1.getMonth()+1;
-            let day = date1.getDate();
-            let result = `${year}-${month}-${day}`;
-            var date2 = new Date(result);
             analysisObj.detail_id = cur.id;
             analysisObj.stock_code = cur.stock_code;
-            analysisObj.date = UTIL.generateMySqlDate(date2);
+            analysisObj.date = UTIL.generateMySqlDate(date1);
             returnValues.push(analysisObj);
             cursor++;
         }
 
         var values = makeParameterInOrder(returnValues);
 
-        var sql = "insert into t_stock_tools (detail_idmacd_difmacd_deamacd_barmacd_ema12macd_ema26price_day_10price_day_20price_day_30price_day_60price_day_120price_day_250price_day_13price_day_34price_day_55price_day_89amount_day_10price_day_144amount_day_20amount_day_30amount_day_60amount_day_120amount_day_250amount_day_13amount_day_34amount_day_55amount_day_89amount_day_144boll_midboll_uperboll_downstock_codedate) values ?";
+        var valueAarry = generateValues(returnValues);
+
+
+        var sql = "insert into t_stock_tools (detail_id, macd_dif, macd_dea, macd_bar, macd_ema12, macd_ema26, price_day_10, price_day_20, price_day_30, price_day_60, price_day_120, price_day_250, price_day_13, price_day_34, price_day_55, price_day_89, amount_day_10, price_day_144, amount_day_20, amount_day_30, amount_day_60, amount_day_120, amount_day_250, amount_day_13, amount_day_34, amount_day_55, amount_day_89, amount_day_144, boll_mid, boll_uper, boll_down, stock_code, date) values ? ";
         
-        MySqlService.query(sql, values, function(err, result) {
+        //var item = returnValues[0];
+
+        //var value = ` (\"${item.detail_id}\", \"${item.macd_dif}\", \"${item.macd_dea}\", \"${item.macd_bar}\", \"${item.macd_ema12}\", \"${item.macd_ema26}\", \"${item.price_day_10}\", \"${item.price_day_20}\", \"${item.price_day_30}\", \"${item.price_day_60}\", \"${item.price_day_120}\", \"${item.price_day_250}\", \"${item.price_day_13}\", \"${item.price_day_34}\", \"${item.price_day_55}\", \"${item.price_day_89}\", \"${item.amount_day_10}\", \"${item.price_day_144}\", \"${item.amount_day_20}\", \"${item.amount_day_30}\", \"${item.amount_day_60}\", \"${item.amount_day_120}\", \"${item.amount_day_250}\", \"${item.amount_day_13}\", \"${item.amount_day_34}\", \"${item.amount_day_55}\", \"${item.amount_day_89}\", \"${item.amount_day_144}\", \"${item.boll_mid}\", \"${item.boll_uper}\", \"${item.boll_down}\", \"${item.stock_code}\", \"${item.date}\")`;
+
+        //console.log(sql+value);
+
+        MySqlService.query(sql, [valueAarry], function(err, result) {
             if(err){
+                logger.error(sql+value);
                 logger.info(err);
             }
             callback();
