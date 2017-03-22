@@ -35,7 +35,7 @@ function initialStocks(){
     UTIL.removeDir(__dirname+"//stockDetail");
     fs.mkdir(__dirname+"//stockDetail");
 
-    MySqlService.query('select * from t_stock_name', function (error, results, fields){
+    MySqlService.query('select * from t_stock_name where code>"600706"', function (error, results, fields){
         jsonfile.writeFileSync(__dirname+"//stockName.json", results);
         var stocks = jsonfile.readFileSync(__dirname+"//stockName.json");
         var that = this;
@@ -141,207 +141,216 @@ function generateValues(objects){
 
 function init(code, callback){
 
-    MySqlService.query('select * from t_stock_detail t where t.stock_code=? order by t.date',[code] , function (error, results, fields){
-
-        var cursor = 1;
-
-        var MACDs = [];
-
-        if(!results||results.length == 0){
-            logger.error('no record found for:'+ code);
+    MySqlService.query('select count(*) as m_count from t_stock_tools where stock_code = ?',[code], function (error, results, fields){
+        logger.info(results);
+        if(results[0]['m_count']>0){
+            logger.info(`tools insert for code ${code} has been finished, no need process`);
             callback([]);
-        }
-
-        //initial MACD parameter
-        var cacheEma12 = results[0].price, cacheEma26=results[0].price, cacheDea=0;
-
-        //cache for average
-        var priceCache = [];
-        var amountCache = [];
-        var averageDefine = [10,20,30,60,120,250,13,34,55,89,144];
-
-        var returnValues = [];
-
-
-        while(cursor <= results.length-1){
-
-            var analysisObj = initInsertObject();
-            var cur = results[cursor];
-            priceCache.push(cur.price);
-            amountCache.push(cur.amount_stock);
-
-            //MACD calculate{
-            try{
-                var MACDResult = calculateService.calcMACD({preEma12:cacheEma12, preEma26:cacheEma26, preDea:cacheDea, price:cur.price});
-                cacheDea = MACDResult.dea;
-                cacheEma12 = MACDResult.ema12;
-                cacheEma26 = MACDResult.ema26;
-                analysisObj.macd_dea = MACDResult.dea;
-                analysisObj.macd_ema12 = MACDResult.ema12;
-                analysisObj.macd_ema26 = MACDResult.ema26;
-                analysisObj.macd_bar = MACDResult.bar;
-                analysisObj.macd_dif = MACDResult.dif;
-            } catch(e){
-                logger.info('calculate MACD error');
-                logger.info(e);
+            return;
+        } else {
+            MySqlService.query('select * from t_stock_detail t where t.stock_code=? order by t.date',[code] , function (error, results, fields){
+            var cursor = 1;
+            var MACDs = [];
+            if(!results||results.length == 0){
+                logger.error('no record found for:'+ code);
+                callback([]);
+                return;
             }
-            //}MACD calculate
 
-            //average
-            try{
+            //initial MACD parameter
+            var cacheEma12 = results[0].price, cacheEma26=results[0].price, cacheDea=0;
 
-                averageDefine.forEach(function(item){
-                    if(priceCache.length > item){
-                        var priceAverage = 0;
-                        for(var i = priceCache.length-item; i<priceCache.length;i++){
-                            priceAverage += priceCache[i];
-                        }
-                        priceAverage = priceAverage/item;
-                        priceAverage = priceAverage.toFixed(2);
-                        analysisObj[`price_day_${item}`] = priceAverage;
-                    }
-                });
+            //cache for average
+            var priceCache = [];
+            var amountCache = [];
+            var averageDefine = [10,20,30,60,120,250,13,34,55,89,144];
 
-                averageDefine.forEach(function(item){
-                    if(amountCache.length > item){
-                        var amountAverage = 0;
-                        for(var i = amountCache.length-item; i<amountCache.length;i++){
-                            amountAverage += amountCache[i];
-                        }
-                        amountAverage = amountAverage/item;
-                        amountAverage = amountAverage.toFixed(2);
-                        analysisObj[`amount_day_${item}`] = amountAverage;
-                    }
-                });
+            var returnValues = [];
 
-            }catch(e){
-                logger.info('calculate average error');
-            }
-            //average
 
-            //BOLL
+            while(cursor <= results.length-1){
 
-            try{
-                if(priceCache.length>=20){
-                    var average = 0;
-                    for(var i = priceCache.length-20;i<priceCache.length;i++){
-                        average += priceCache[i];
-                    }
-                    average = average/20;
-                    var averageA = 0;
-                    for(var i = priceCache.length-20;i<priceCache.length;i++){
-                        averageA += (priceCache[i]-average)*(priceCache[i]-average);
-                    }
-                    averageA = averageA/20;
-                    averageA = Math.sqrt(averageA);
-                    var uper = average + 2*averageA;
-                    var down = average - 2*averageA;
+                var analysisObj = initInsertObject();
+                var cur = results[cursor];
+                priceCache.push(cur.price);
+                amountCache.push(cur.amount_stock);
 
-                    analysisObj.boll_mid = average.toFixed(2);
-                    analysisObj.boll_uper = uper.toFixed(2);
-                    analysisObj.boll_down = down.toFixed(2);
-
+                //MACD calculate{
+                try{
+                    var MACDResult = calculateService.calcMACD({preEma12:cacheEma12, preEma26:cacheEma26, preDea:cacheDea, price:cur.price});
+                    cacheDea = MACDResult.dea;
+                    cacheEma12 = MACDResult.ema12;
+                    cacheEma26 = MACDResult.ema26;
+                    analysisObj.macd_dea = MACDResult.dea;
+                    analysisObj.macd_ema12 = MACDResult.ema12;
+                    analysisObj.macd_ema26 = MACDResult.ema26;
+                    analysisObj.macd_bar = MACDResult.bar;
+                    analysisObj.macd_dif = MACDResult.dif;
+                } catch(e){
+                    logger.info('calculate MACD error');
+                    logger.info(e);
                 }
-            }catch(e){
-                logger.info('calculate BOLL error');
-            }
+                //}MACD calculate
 
-            //BOLL
-            var date1 = new Date(cur.date);
-            analysisObj.detail_id = cur.id;
-            analysisObj.stock_code = cur.stock_code;
-            analysisObj.date = UTIL.generateMySqlDate(date1);
-            returnValues.push(analysisObj);
-            cursor++;
-        }
+                //average
+                try{
 
-        var values = makeParameterInOrder(returnValues);
+                    averageDefine.forEach(function(item){
+                        if(priceCache.length > item){
+                            var priceAverage = 0;
+                            for(var i = priceCache.length-item; i<priceCache.length;i++){
+                                priceAverage += priceCache[i];
+                            }
+                            priceAverage = priceAverage/item;
+                            priceAverage = priceAverage.toFixed(2);
+                            analysisObj[`price_day_${item}`] = priceAverage;
+                        }
+                    });
 
-        var valueAarry = generateValues(returnValues);
+                    averageDefine.forEach(function(item){
+                        if(amountCache.length > item){
+                            var amountAverage = 0;
+                            for(var i = amountCache.length-item; i<amountCache.length;i++){
+                                amountAverage += amountCache[i];
+                            }
+                            amountAverage = amountAverage/item;
+                            amountAverage = amountAverage.toFixed(2);
+                            analysisObj[`amount_day_${item}`] = amountAverage;
+                        }
+                    });
 
-
-        var sql = "insert into t_stock_tools (detail_id, macd_dif, macd_dea, macd_bar, macd_ema12, macd_ema26, price_day_10, price_day_20, price_day_30, price_day_60, price_day_120, price_day_250, price_day_13, price_day_34, price_day_55, price_day_89, amount_day_10, price_day_144, amount_day_20, amount_day_30, amount_day_60, amount_day_120, amount_day_250, amount_day_13, amount_day_34, amount_day_55, amount_day_89, amount_day_144, boll_mid, boll_uper, boll_down, stock_code, date) values ? ";
-        
-        //var item = returnValues[0];
-
-        //var value = ` (\"${item.detail_id}\", \"${item.macd_dif}\", \"${item.macd_dea}\", \"${item.macd_bar}\", \"${item.macd_ema12}\", \"${item.macd_ema26}\", \"${item.price_day_10}\", \"${item.price_day_20}\", \"${item.price_day_30}\", \"${item.price_day_60}\", \"${item.price_day_120}\", \"${item.price_day_250}\", \"${item.price_day_13}\", \"${item.price_day_34}\", \"${item.price_day_55}\", \"${item.price_day_89}\", \"${item.amount_day_10}\", \"${item.price_day_144}\", \"${item.amount_day_20}\", \"${item.amount_day_30}\", \"${item.amount_day_60}\", \"${item.amount_day_120}\", \"${item.amount_day_250}\", \"${item.amount_day_13}\", \"${item.amount_day_34}\", \"${item.amount_day_55}\", \"${item.amount_day_89}\", \"${item.amount_day_144}\", \"${item.boll_mid}\", \"${item.boll_uper}\", \"${item.boll_down}\", \"${item.stock_code}\", \"${item.date}\")`;
-
-        //console.log(sql+value);
-
-        MySqlService.query(sql, [valueAarry], function(err, result) {
-            if(err){
-                logger.error(sql+value);
-                logger.info(err);
-            }
-            callback();
-        });
-
-        /*var that=this;
-        function run(callback2){
-            var record = returnValues.shift();
-            var sql = 'insert into t_stock_tools (';
-            var values = 'values (';
-            var insertValues = [];
-            Object.keys(record).forEach(function(key, index){
-                sql += key;
-                insertValues.push(record[key]);
-                if(index < Object.keys(record).length -1 ){
-                    sql += ', ';
-                    values += '?, ';
-                } else {
-                    sql += ') ';
-                    values += '?) ';
+                }catch(e){
+                    logger.info('calculate average error');
                 }
-            });
+                //average
 
-            MySqlService.query(sql + values, insertValues, function(err, result) {
+                //BOLL
+
+                try{
+                    if(priceCache.length>=20){
+                        var average = 0;
+                        for(var i = priceCache.length-20;i<priceCache.length;i++){
+                            average += priceCache[i];
+                        }
+                        average = average/20;
+                        var averageA = 0;
+                        for(var i = priceCache.length-20;i<priceCache.length;i++){
+                            averageA += (priceCache[i]-average)*(priceCache[i]-average);
+                        }
+                        averageA = averageA/20;
+                        averageA = Math.sqrt(averageA);
+                        var uper = average + 2*averageA;
+                        var down = average - 2*averageA;
+
+                        analysisObj.boll_mid = average.toFixed(2);
+                        analysisObj.boll_uper = uper.toFixed(2);
+                        analysisObj.boll_down = down.toFixed(2);
+
+                    }
+                }catch(e){
+                    logger.info('calculate BOLL error');
+                }
+
+                //BOLL
+                var date1 = new Date(cur.date);
+                analysisObj.detail_id = cur.id;
+                analysisObj.stock_code = cur.stock_code;
+                analysisObj.date = UTIL.generateMySqlDate(date1);
+                returnValues.push(analysisObj);
+                cursor++;
+            }
+
+            var values = makeParameterInOrder(returnValues);
+
+            var valueAarry = generateValues(returnValues);
+
+
+            var sql = "insert into t_stock_tools (detail_id, macd_dif, macd_dea, macd_bar, macd_ema12, macd_ema26, price_day_10, price_day_20, price_day_30, price_day_60, price_day_120, price_day_250, price_day_13, price_day_34, price_day_55, price_day_89, amount_day_10, price_day_144, amount_day_20, amount_day_30, amount_day_60, amount_day_120, amount_day_250, amount_day_13, amount_day_34, amount_day_55, amount_day_89, amount_day_144, boll_mid, boll_uper, boll_down, stock_code, date) values ? ";
+            
+            //var item = returnValues[0];
+
+            //var value = ` (\"${item.detail_id}\", \"${item.macd_dif}\", \"${item.macd_dea}\", \"${item.macd_bar}\", \"${item.macd_ema12}\", \"${item.macd_ema26}\", \"${item.price_day_10}\", \"${item.price_day_20}\", \"${item.price_day_30}\", \"${item.price_day_60}\", \"${item.price_day_120}\", \"${item.price_day_250}\", \"${item.price_day_13}\", \"${item.price_day_34}\", \"${item.price_day_55}\", \"${item.price_day_89}\", \"${item.amount_day_10}\", \"${item.price_day_144}\", \"${item.amount_day_20}\", \"${item.amount_day_30}\", \"${item.amount_day_60}\", \"${item.amount_day_120}\", \"${item.amount_day_250}\", \"${item.amount_day_13}\", \"${item.amount_day_34}\", \"${item.amount_day_55}\", \"${item.amount_day_89}\", \"${item.amount_day_144}\", \"${item.boll_mid}\", \"${item.boll_uper}\", \"${item.boll_down}\", \"${item.stock_code}\", \"${item.date}\")`;
+
+            //console.log(sql+value);
+
+            MySqlService.query(sql, [valueAarry], function(err, result) {
                 if(err){
+                    logger.error(sql+value);
                     logger.info(err);
                 }
-                if(returnValues.length == 0){
-                    callback2(true);
-                } else {
-                    run.apply(that, [callback2]);
-                }
-            });
-        }
-
-        run.apply(that, [function(isLastOne){
-            if(isLastOne){
                 callback();
-            }
-        }]);*/
-
-        /*returnValues.forEach(function(record, index){
-            var sql = 'insert into t_stock_tools (';
-            var values = 'values (';
-            var insertValues = [];
-            Object.keys(record).forEach(function(key, index){
-                sql += key;
-                insertValues.push(record[key]);
-                if(index < Object.keys(record).length -1 ){
-                    sql += ', ';
-                    values += '?, ';
-                } else {
-                    sql += ') ';
-                    values += '?) ';
-                }
             });
 
-            MySqlService.query(sql + values, insertValues, function(err, result) {
-                if(err){
-                    logger.info(err);
-                }
-            });
+            /*var that=this;
+            function run(callback2){
+                var record = returnValues.shift();
+                var sql = 'insert into t_stock_tools (';
+                var values = 'values (';
+                var insertValues = [];
+                Object.keys(record).forEach(function(key, index){
+                    sql += key;
+                    insertValues.push(record[key]);
+                    if(index < Object.keys(record).length -1 ){
+                        sql += ', ';
+                        values += '?, ';
+                    } else {
+                        sql += ') ';
+                        values += '?) ';
+                    }
+                });
 
-            if(index == returnValues.length-1){
-                callback(returnValues);
+                MySqlService.query(sql + values, insertValues, function(err, result) {
+                    if(err){
+                        logger.info(err);
+                    }
+                    if(returnValues.length == 0){
+                        callback2(true);
+                    } else {
+                        run.apply(that, [callback2]);
+                    }
+                });
             }
-            //logger.info(`sql is ${sql + values}`);
-        });*/
 
-        
+            run.apply(that, [function(isLastOne){
+                if(isLastOne){
+                    callback();
+                }
+            }]);*/
+
+            /*returnValues.forEach(function(record, index){
+                var sql = 'insert into t_stock_tools (';
+                var values = 'values (';
+                var insertValues = [];
+                Object.keys(record).forEach(function(key, index){
+                    sql += key;
+                    insertValues.push(record[key]);
+                    if(index < Object.keys(record).length -1 ){
+                        sql += ', ';
+                        values += '?, ';
+                    } else {
+                        sql += ') ';
+                        values += '?) ';
+                    }
+                });
+
+                MySqlService.query(sql + values, insertValues, function(err, result) {
+                    if(err){
+                        logger.info(err);
+                    }
+                });
+
+                if(index == returnValues.length-1){
+                    callback(returnValues);
+                }
+                //logger.info(`sql is ${sql + values}`);
+            });*/
+
+            
+        });
+        }
     });
+
+    
 }
 
 /*init('002828', function(values){
