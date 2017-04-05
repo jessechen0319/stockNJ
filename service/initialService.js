@@ -46,7 +46,7 @@ function initialStocks(){
 
             logger.info(`processing for ${stock.code} start+++`);
             init(stock.code, function(results){
-                logger.info(`processing for ${stock.code} finish---`);
+                logger.info(`processing for ${stock.code} finish--- remind is ${stocks.length}`);
                 process.call(that);
             });
             stocks = jsonfile.readFileSync(__dirname+"//stockName.json");
