@@ -35,7 +35,7 @@ function initialStocks(){
     UTIL.removeDir(__dirname+"//stockDetail");
     fs.mkdir(__dirname+"//stockDetail");
 
-    MySqlService.query('select * from t_stock_name ', function (error, results, fields){
+    MySqlService.query('select * from t_stock_name', function (error, results, fields){
         jsonfile.writeFileSync(__dirname+"//stockName.json", results);
         var stocks = jsonfile.readFileSync(__dirname+"//stockName.json");
         var that = this;
@@ -275,7 +275,7 @@ function init(code, callback){
 
             MySqlService.query(sql, [valueAarry], function(err, result) {
                 if(err){
-                    logger.error(sql+value);
+                    logger.error(sql+valueAarry);
                     logger.info(err);
                 }
                 callback();
