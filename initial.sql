@@ -34,6 +34,11 @@ CONSTRAINT `f_status` FOREIGN KEY (`job_status_id`) REFERENCES `t_job_status` (`
 )
 ;
 
+ALTER TABLE `stock`.`t_job` 
+ADD COLUMN `date` DATE NULL AFTER `job_status_id`;
+ALTER TABLE `stock`.`t_job` 
+ADD COLUMN `source` VARCHAR(255) NULL AFTER `date`;
+
 ALTER TABLE `t_job`
 MODIFY COLUMN `job_id`  int(11) NOT NULL AUTO_INCREMENT FIRST ;
 
@@ -43,7 +48,7 @@ insert into t_job_status (status_id, status_desc) values (3, "Finished");
 insert into t_job_status (status_id, status_desc) values (4, "Failed");
 
 insert into t_job_type (type_id, type_desc) values (1, "Stock Name Fetch");
-
+insert into t_job_type (type_id, type_desc) values (2, "Stock detail initial Fetch");
 --**********************job************************
 
 /*
@@ -60,8 +65,6 @@ File Encoding         : 65001
 
 Date: 2016-12-21 20:24:58
 */
-
-SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
 -- Table structure for t_stock_detail

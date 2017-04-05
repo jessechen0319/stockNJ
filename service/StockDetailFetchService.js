@@ -125,7 +125,7 @@ var stockDetailService = (function(){
 
 		jobService.updateJobRunning(jobId);
 
-		MySqlService.query('select * from t_stock_name', function (error, results, fields){
+		MySqlService.query("select * from t_stock_name", function (error, results, fields){
 
 			jsonfile.writeFileSync(__dirname+"//stockName.json", results);
 			function exe(){

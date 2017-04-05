@@ -35,7 +35,7 @@ function initialStocks(){
     UTIL.removeDir(__dirname+"//stockDetail");
     fs.mkdir(__dirname+"//stockDetail");
 
-    MySqlService.query('select * from t_stock_name where code>"600706"', function (error, results, fields){
+    MySqlService.query('select * from t_stock_name ', function (error, results, fields){
         jsonfile.writeFileSync(__dirname+"//stockName.json", results);
         var stocks = jsonfile.readFileSync(__dirname+"//stockName.json");
         var that = this;
