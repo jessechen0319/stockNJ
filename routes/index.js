@@ -11,6 +11,8 @@ var StockDetailFetchService = require("../service/StockDetailFetchService");
 var JobService = require("../service/JobService");
 var InitialService = require("../service/initialService");
 
+var ToolRefreshService = require("../service/DailyToolRefresh");
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	
@@ -20,6 +22,12 @@ router.get('/', function(req, res, next) {
 router.get('/manualIndex', function(req, res, next) {
 
 	InitialService.initialStocks();
+	res.end('initial fetch index started');
+});
+
+router.get('/manualRefreshTools', function(req, res, next) {
+
+	ToolRefreshService.refresh();
 	res.end('initial fetch index started');
 });
 
