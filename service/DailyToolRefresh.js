@@ -12,13 +12,15 @@ function init(stockCode, callback){
         if(results.length>0){
             logger.info(`for stock ${stockCode}, there is un-analysised record, length is ${results.length}`);
             
-            results.forEach(function(detail){
+            results.forEach(function(detail, index){
                 var toolObject = initInsertObject();
                  // insert normal information
                 var date1 = new Date(detail.date);
                 toolObject.detail_id = detail.id;
                 toolObject.stock_code = detail.stock_code;
                 toolObject.date = UTIL.generateMySqlDate(date1);
+                var isLastOne = index==(results.length-1);
+                var resultList = [];
                 // calculate average & BOLL
                 MySqlService.query('select * from t_stock_detail t where t.date < ? order by t.date desc limit 250' [detail.date], function(err, detailResult, fields){
                     logger.info(`daily fetch for stock tools, date is ${detail.date}, result length is ${detailResult.length}`);
@@ -70,7 +72,6 @@ function init(stockCode, callback){
                         MySqlService.query(`select * from t_stock_tools m where m.date < ? order by m.date desc limit 1`, [detail.date], function(err, previousResult, fields){
                             if(err){
                                 logger.error(err);
-                                callback(toolObject);
                             } else {
                                 if(previousResult.length>0){
                                     var previousValue = previousResult[0];
@@ -82,18 +83,22 @@ function init(stockCode, callback){
                                     toolObject.macd_bar = MACDResult.bar;
                                     toolObject.macd_dif = MACDResult.dif;
                                 }
-                                callback(toolObject);
+                            }
+
+                            resultList.push(toolObject);
+
+                            if(isLastOne){
+                                callback(resultList);
                             }
                             
                         });
                     } else {
-                        callback();
-                    }
-
+                        callback([]);
+                    } 
                 });
-               
-                
             });
+        } else {
+            callback([]);
         }
     });
 }
@@ -105,13 +110,17 @@ function refresh(){
         var stocks = jsonfile.readFileSync(__dirname+"//stockNameDailyTool.json");
         var that = this;
 
+        var analysisedToolRecords = [];
+
         function process(){
             var stock = stocks.shift();
             jsonfile.writeFileSync(__dirname+"//stockNameDailyTool.json", stocks);
 
             logger.info(`processing for ${stock.code} start+++`);
             init(stock.code, function(results){
+                analysisedToolRecords.concat(results);
                 logger.info(`processing for ${stock.code} finish---`);
+                logger.info(JSON.stringify(results));
                 process.call(that);
             });
             stocks = jsonfile.readFileSync(__dirname+"//stockNameDailyTool.json");
