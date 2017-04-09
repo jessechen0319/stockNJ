@@ -113,5 +113,9 @@ router.get('/viewStatus', function(req, res, next) {
 	res.render('statusSimple', { title: 'Express' });
 });
 
+router.get('/manualOrder', function(req, res, next) {
+
+	res.render('manualOrder');
+});
 
 module.exports = router;
