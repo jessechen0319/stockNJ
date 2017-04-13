@@ -5,6 +5,8 @@ var JobService = require("../service/JobService");
 var jobService = new JobService();
 var jsonfile = require('jsonfile');
 
+var ToolRefreshService = require("./DailyToolRefresh");
+
 var stockDetailService = (function(){
 
 	function _analysisData(data){
@@ -48,10 +50,6 @@ var stockDetailService = (function(){
 				setTimeout(callback, 1000);
 			}
 		}});
-
-		if(isLast){
-			jobService.updateJobFinished(jobId);
-		}
 	}
 
 
@@ -163,6 +161,10 @@ var stockDetailService = (function(){
 				_fetchData(item.code, item.market, readFileArray.length==0, jobId, function(){
 					if(readFileArray&&readFileArray.length>0){
 						exe.apply(that);
+					} else {
+						ToolRefreshService.refresh(()=>{
+							jobService.updateJobFinished(jobId);
+						});
 					}
 				});
 			}

@@ -1,6 +1,6 @@
 var http = require('http');
 var fs = require('fs');
-
+var MySqlService = require("./MySqlService");
 var Util = (function(){
 
 	function generateCurrentDate(){
@@ -10,6 +10,29 @@ var Util = (function(){
 		let day = now.getDate();
 		let result = `${year}-${month}-${day}`;
 		return result;
+	}
+
+	function isStockTopOrLow(stockCode, callback){
+		MySqlService.query(`SELECT 
+				1
+			FROM
+				(SELECT 
+					*
+				FROM
+					t_stock_detail t
+				WHERE
+					t.stock_code = ?
+				ORDER BY t.date DESC
+				LIMIT 1) m
+			WHERE
+				(m.price - m.last_day_price) / m.last_day_price < 0.095
+					AND (m.price - m.last_day_price) / m.last_day_price > - 0.095`,[stockCode] ,function (error, results, fields){
+						if(results&&results.length>0){
+							callback(false);
+						}else{
+							callback(true);
+						}
+		});
 	}
 
 	function generateMySqlDate(date){
@@ -69,7 +92,8 @@ var Util = (function(){
 			"fetchPath": fetchPath,
 			"generateMySqlDate": generateMySqlDate,
 			"generateCurrentDate":generateCurrentDate,
-			"removeDir":removeDir
+			"removeDir":removeDir,
+			"isStockTopOrLow":isStockTopOrLow
 			};
 })();
 

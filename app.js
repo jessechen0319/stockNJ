@@ -8,8 +8,8 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var test = require('./routes/test');
-var manualOrder = require('./routes/manualOrder');
 var stockBasic = require('./routes/stockBasicInformationController');
+var analysis = require('./routes/analysis');
 
 var JobService = require("./service/JobService");
 var StockDetailFetchService = require("./service/StockDetailFetchService");
@@ -34,7 +34,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/test', test);
 app.use('/stockBasic', stockBasic);
-
+app.use('/analysis', analysis);
 /*
   Job Block
   

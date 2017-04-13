@@ -104,3 +104,7 @@ app.controller('index', function ($scope, $http, $rootScope) {
 
 	console.log($scope.trackLastFiveDays);
 });
+
+app.controller('maunalOrder', function($scope, $http, $rootScope){
+	//$scope.manualFetch
+});

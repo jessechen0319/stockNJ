@@ -117,7 +117,7 @@ function init(stockCode, callback){
     });
 }
 
-function refresh(){
+function refresh(callback){
 
     MySqlService.query('select * from t_stock_name', function (error, results, fields){
         jsonfile.writeFileSync(__dirname+"//stockNameDailyTool.json", results);
@@ -132,7 +132,7 @@ function refresh(){
 
             logger.info(`processing for ${stock.code} start+++`);
             if(stocks.length == 0){
-                var sql = "insert into t_stock_tools (detail_id, macd_dif, macd_dea, macd_bar, macd_ema12, macd_ema26, price_day_10, price_day_20, price_day_30, price_day_60, price_day_120, price_day_250, price_day_13, price_day_34, price_day_55, price_day_89, amount_day_10, price_day_144, amount_day_20, amount_day_30, amount_day_60, amount_day_120, amount_day_250, amount_day_13, amount_day_34, amount_day_55, amount_day_89, amount_day_144, boll_mid, boll_uper, boll_down, stock_code, date) values ? ";
+                callback();
             } else {
                 init(stock.code, function(){
                     logger.info(`processing for ${stock.code} finish---`);
