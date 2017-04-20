@@ -12,11 +12,20 @@ var JobService = require("../service/JobService");
 var InitialService = require("../service/initialService");
 
 var ToolRefreshService = require("../service/DailyToolRefresh");
+var strategyFetchPriceService = require("../service/strategyFetchPriceService");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	
 	res.render('index', { title: 'Express' });
+});
+
+router.get('/test', function(req, res, next) {
+
+	strategyFetchPriceService.fetch(function(){
+		console.log('finished');
+	});
+	res.end('initial fetch index started');
 });
 
 router.get('/manualIndex', function(req, res, next) {

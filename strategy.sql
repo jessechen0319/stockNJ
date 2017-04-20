@@ -31,3 +31,5 @@ and not exists
 and m.date>'2017-03-05 00:00:00'
 and m.stock_code=t.stock_code
 and m.macd_dif>0)
+
+

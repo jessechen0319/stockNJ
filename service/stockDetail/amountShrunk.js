@@ -4,7 +4,9 @@ var jsonfile = require('jsonfile');
 var logger = require('../LogService');
 var UTIL = require('../Util');
 
-function init(stockCode, callBack){
+// amount shunk strategy 1
+//strategy id---->1
+function shunkStrategy1(stockCode, callBack){
     MySqlService.query('select * from t_stock_detail t where t.stock_code=? order by t.date desc limit 60',[stockCode] ,function (error, results, fields){
         
         var totalSum = 0;
@@ -26,12 +28,21 @@ function init(stockCode, callBack){
        }
 
        if(endSum<totalSum/3&&endSum<beginSum/8){
-           UTIL.isStockTopOrLow(stockCode, function(isLowOrHigh){
-               if(!isLowOrHigh){
-                    logger.info(`${stockCode} shrunk its amount !!!!!!!!!!!!!!`);
-               }
+           if(results[0]['top_price']!=results[0]['low_price']){
+                let insertParam = [];
+                insertParam.push(1);
+                insertParam.push(stockCode);
+                insertParam.push(results[0].price);
+                insertParam.push(results[0].date);
+                MySqlService.query('INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date) VALUES (?, ?, ?, ?)', insertParam, function(err){
+                    if(err){
+                        logger.error(err);
+                    }
+                    callBack();
+                } );
+           } else {
                callBack();
-           });
+           }
        } else {
             callBack();
        }
@@ -39,7 +50,11 @@ function init(stockCode, callBack){
     });
 }
 
-function anountShrunk(){
+function init(stockCode, callBack){
+    shunkStrategy1(stockCode, callBack);
+}
+
+function anountShrunk(callBack){
     MySqlService.query('select * from t_stock_name', function (error, results, fields){
         jsonfile.writeFileSync(__dirname+"//amountShrunk.json", results);
         var stocks = jsonfile.readFileSync(__dirname+"//amountShrunk.json");
@@ -51,6 +66,7 @@ function anountShrunk(){
             var stock = stocks.shift();
             jsonfile.writeFileSync(__dirname+"//amountShrunk.json", stocks);
             if(stocks.length == 0){
+                callBack();
                 logger.info('finished process-------');
             } else {
                 init(stock.code, function(){

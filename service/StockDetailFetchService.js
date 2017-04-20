@@ -2,6 +2,7 @@ var MySqlService = require("./MySqlService");
 var Util = require("./Util");
 var logger = require('./LogService');
 var JobService = require("../service/JobService");
+var strategyFetchService = require("./strategyFetchPriceService")
 var jobService = new JobService();
 var jsonfile = require('jsonfile');
 
@@ -163,7 +164,9 @@ var stockDetailService = (function(){
 						exe.apply(that);
 					} else {
 						ToolRefreshService.refresh(()=>{
-							jobService.updateJobFinished(jobId);
+							strategyFetchService.fetch(()=>{
+								jobService.updateJobFinished(jobId);
+							});
 						});
 					}
 				});

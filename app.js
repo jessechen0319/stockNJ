@@ -41,7 +41,7 @@ app.use('/analysis', analysis);
 */
 
 var CronJob = require('cron').CronJob;
-new CronJob('00 20 17 * * 1-5', function() {
+/*new CronJob('00 20 17 * * 1-5', function() {
   var jobService = new JobService();
   jobService.createJob(2, function(err, jobId){
     if(err){
@@ -59,7 +59,7 @@ new CronJob('00 04 21 * * 1-5', function() {
       StockDetailFetchService.fetchAverage(jobId);
     }
   }, "Daily Job fetching");
-}, null, true, 'Asia/Shanghai');
+}, null, true, 'Asia/Shanghai');*/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

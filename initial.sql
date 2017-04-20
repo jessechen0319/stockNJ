@@ -144,3 +144,41 @@ CREATE TABLE `t_stack_tools` (
   PRIMARY KEY (`id`),
   KEY `f_detail_id` (`detail_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `t_strategy` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `strategy_name` VARCHAR(45) NOT NULL,
+  `strategy_comments` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`))
+
+  CREATE TABLE `stock`.`t_strategy_tester` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `strategy_id` INT NOT NULL,
+  `stock_code` VARCHAR(45) NOT NULL,
+  `price` FLOAT(10,2) NOT NULL,
+  `date` DATETIME NOT NULL,
+  `price_5` FLOAT(10,2) NULL,
+  `price_10` FLOAT(10,2) NULL,
+  `price_30` FLOAT(10,2) NULL,
+  `price_60` FLOAT(10,2) NULL,
+  `price_180` FLOAT(10,2) NULL,
+  `price_360` FLOAT(10,2) NULL,
+  `strength_5` FLOAT(10,2) NULL,
+  `strength_10` FLOAT(10,2) NULL,
+  `strength_30` FLOAT(10,2) NULL,
+  `strength_60` FLOAT(10,2) NULL,
+  `strength_180` FLOAT(10,2) NULL,
+  `strength_360` FLOAT(10,2) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `f_stragegy_id_idx` (`strategy_id` ASC),
+  CONSTRAINT `f_stragegy_id`
+    FOREIGN KEY (`strategy_id`)
+    REFERENCES `stock`.`t_strategy` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+ALTER TABLE `stock`.`t_strategy` 
+ADD COLUMN `status` INT NOT NULL AFTER `strategy_comments`;
+
+INSERT INTO `stock`.`t_strategy` (`strategy_name`, `strategy_comments`, `status`) VALUES ('shrunk_1', '取60天数据，最近5天的成交量是平均成交量的1/3， 是头5天成交量的1/8', '1');
+INSERT INTO `stock`.`t_job_type` (`type_id`, `type_desc`) VALUES ('3', 'strategy daily fetch');
