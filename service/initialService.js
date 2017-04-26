@@ -143,7 +143,7 @@ function init(code, callback){
 
     MySqlService.query('select count(*) as m_count from t_stock_tools where stock_code = ?',[code], function (error, results, fields){
         logger.info(results);
-        if(results[0]['m_count']>0){
+        if(results&&results[0]['m_count']>0){
             logger.info(`tools insert for code ${code} has been finished, no need process`);
             callback([]);
             return;
