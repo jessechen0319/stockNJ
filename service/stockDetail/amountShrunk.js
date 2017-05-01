@@ -15,8 +15,12 @@ function shunkStrategy1(stockCode, callBack){
        if(results&&results.length>0){
 
             var lastRecordDate = results[0]['date'];
-            logger.info(`last date is -> ${lastRecordDate}`);
-
+            var today = UTIL.generateCurrentDate();
+            today = new Date(today);
+            if(today!=lastRecordDate){
+                logger.info(`last date is -> ${lastRecordDate}, corrent date is -> ${today}`);
+                return;
+            }
             results.forEach(function(element, index) {
                 totalSum += element.amount_stock;
                 totalSum = totalSum/2;
@@ -29,28 +33,27 @@ function shunkStrategy1(stockCode, callBack){
                     beginSum = beginSum/2;
                 }
             }, this);
-       }
 
-       if(endSum<totalSum/3&&endSum<beginSum/8){
-           if(results[0]['top_price']!=results[0]['low_price']){
-                let insertParam = [];
-                insertParam.push(1);
-                insertParam.push(stockCode);
-                insertParam.push(results[0].price);
-                insertParam.push(results[0].date);
-                /*MySqlService.query('INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date) VALUES (?, ?, ?, ?)', insertParam, function(err){
-                    if(err){
-                        logger.error(err);
-                    }
+            if(endSum<totalSum/3&&endSum<beginSum/8){
+                if(results[0]['top_price']!=results[0]['low_price']){
+                        let insertParam = [];
+                        insertParam.push(1);
+                        insertParam.push(stockCode);
+                        insertParam.push(results[0].price);
+                        insertParam.push(results[0].date);
+                        MySqlService.query('INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date) VALUES (?, ?, ?, ?)', insertParam, function(err){
+                            if(err){
+                                logger.error(err);
+                            }
+                            callBack();
+                        } );
+                } else {
                     callBack();
-                } );*/
-           } else {
-               callBack();
-           }
-       } else {
-            callBack();
+                }
+            } else {
+                    callBack();
+            }
        }
-       
     });
 }
 
