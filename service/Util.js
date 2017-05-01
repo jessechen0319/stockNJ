@@ -12,6 +12,22 @@ var Util = (function(){
 		return result;
 	}
 
+	function getPriceOfDay(stockCode, date, callback){
+		MySqlService.query(`
+			select * from t_stock_detail t where t.stock_code = ?
+			and t.date = ?
+		`, [stockCode, date], function(error, results, fields){
+			if(error){
+				callback(0);
+			}
+			if(results && results.length>0){
+				callback(results[0].price);
+			}else {
+				callback(0);
+			}
+		});
+	};
+
 	function isStockTopOrLow(stockCode, callback){
 		MySqlService.query(`SELECT 
 				1
@@ -93,7 +109,8 @@ var Util = (function(){
 			"generateMySqlDate": generateMySqlDate,
 			"generateCurrentDate":generateCurrentDate,
 			"removeDir":removeDir,
-			"isStockTopOrLow":isStockTopOrLow
+			"isStockTopOrLow":isStockTopOrLow,
+			"getPriceOfDay": getPriceOfDay
 			};
 })();
 
