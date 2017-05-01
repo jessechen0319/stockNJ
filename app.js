@@ -13,7 +13,7 @@ var analysis = require('./routes/analysis');
 
 var JobService = require("./service/JobService");
 var StockDetailFetchService = require("./service/StockDetailFetchService");
-
+ 
 var localLogger = require("./service/LogService");
 
 var app = express();

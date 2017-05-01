@@ -13,6 +13,10 @@ function shunkStrategy1(stockCode, callBack){
         var beginSum = 0;
         var endSum = 0;
        if(results&&results.length>0){
+
+            var lastRecordDate = results[0]['date'];
+            logger.info(`last date is -> ${lastRecordDate}`);
+
             results.forEach(function(element, index) {
                 totalSum += element.amount_stock;
                 totalSum = totalSum/2;
@@ -34,12 +38,12 @@ function shunkStrategy1(stockCode, callBack){
                 insertParam.push(stockCode);
                 insertParam.push(results[0].price);
                 insertParam.push(results[0].date);
-                MySqlService.query('INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date) VALUES (?, ?, ?, ?)', insertParam, function(err){
+                /*MySqlService.query('INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date) VALUES (?, ?, ?, ?)', insertParam, function(err){
                     if(err){
                         logger.error(err);
                     }
                     callBack();
-                } );
+                } );*/
            } else {
                callBack();
            }
