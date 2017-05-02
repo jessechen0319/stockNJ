@@ -17,9 +17,9 @@ function shunkStrategy1(stockCode, callBack){
             var lastRecordDate = results[0]['date'];
             var today = UTIL.generateCurrentDate();
             today = new Date(today);
-            if(today!=lastRecordDate){
+            if(today.getFullYear() == lastRecordDate.getFullYear() && today.getMonth() == lastRecordDate.getMonth() && today.getDate() == lastRecordDate.getDate()){
+                logger.info(`${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()+1} not equals ${lastRecordDate.getFullYear()}-${lastRecordDate.getMonth()+1}-${lastRecordDate.getDate()+1}`);
                 callBack();
-                logger.info(`${today} not equals ${lastRecordDate}`);
                 return;
             }
             results.forEach(function(element, index) {
