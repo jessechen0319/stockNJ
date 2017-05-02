@@ -19,6 +19,7 @@ function shunkStrategy1(stockCode, callBack){
             today = new Date(today);
             if(today!=lastRecordDate){
                 callBack();
+                logger.info(`${today} not equals ${lastRecordDate}`);
                 return;
             }
             results.forEach(function(element, index) {

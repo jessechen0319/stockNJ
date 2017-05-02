@@ -11,6 +11,7 @@ function macdDifStrong1(stockCode, callBack) {
             var today = UTIL.generateCurrentDate();
             today = new Date(today);
             if(today!=lastRecordDate){
+                logger.info(`${today} not equals ${lastRecordDate}`);
                 callBack();
                 return;
             }
