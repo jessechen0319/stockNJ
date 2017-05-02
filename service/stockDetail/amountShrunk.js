@@ -36,17 +36,18 @@ function shunkStrategy1(stockCode, callBack){
 
             if(endSum<totalSum/3&&endSum<beginSum/8){
                 if(results[0]['top_price']!=results[0]['low_price']){
-                        let insertParam = [];
-                        insertParam.push(1);
-                        insertParam.push(stockCode);
-                        insertParam.push(results[0].price);
-                        insertParam.push(results[0].date);
-                        MySqlService.query('INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date) VALUES (?, ?, ?, ?)', insertParam, function(err){
-                            if(err){
-                                logger.error(err);
-                            }
-                            callBack();
-                        } );
+                    logger.info(`${stockCode} -> macd dif is good! with price -> ${results[0].price}`);
+                    let insertParam = [];
+                    insertParam.push(1);
+                    insertParam.push(stockCode);
+                    insertParam.push(results[0].price);
+                    insertParam.push(results[0].date);
+                    MySqlService.query('INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date) VALUES (?, ?, ?, ?)', insertParam, function(err){
+                        if(err){
+                            logger.error(err);
+                        }
+                        callBack();
+                    } );
                 } else {
                     callBack();
                 }

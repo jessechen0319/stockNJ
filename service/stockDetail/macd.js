@@ -17,6 +17,7 @@ function macdDifStrong1(stockCode, callBack) {
 
             if(results[1].macd_dif<=results[0].macd_dif && results[1].macd_dif<=results[2].macd_dif){
                 var value1 = 0;
+                
                 if(results[1].macd_dif!=results[2].macd_dif){
                     value1 = results[0].macd_dif - results[1].macd_dif;
                     let value2 = results[2].macd_dif - results[1].macd_dif;
@@ -24,6 +25,7 @@ function macdDifStrong1(stockCode, callBack) {
                 }
 
                 UTIL.getPriceOfDay(stockCode, results[0].date, (price)=>{
+                    logger.info(`${stockCode} -> macd dif is good! with price -> ${price}`);
                     let insertParam = [];
                     insertParam.push(2);
                     insertParam.push(stockCode);
