@@ -61,6 +61,7 @@ function macd(callBack){
         logger.info(`processing start+++`);
         function process(){
             var stock = stocks.shift();
+            logger.info(`macd process ${stock}, remind -> ${stocks.length}`);
             jsonfile.writeFileSync(__dirname+"//macd.json", stocks);
             if(stocks.length == 0){
                 callBack();

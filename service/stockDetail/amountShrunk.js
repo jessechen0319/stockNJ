@@ -72,6 +72,7 @@ function anountShrunk(callBack){
         logger.info(`processing start+++`);
         function process(){
             var stock = stocks.shift();
+            logger.info(`shunk process ${stock}, remind -> ${stocks.length}`);
             jsonfile.writeFileSync(__dirname+"//amountShrunk.json", stocks);
             if(stocks.length == 0){
                 callBack();
