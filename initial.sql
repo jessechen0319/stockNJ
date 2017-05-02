@@ -145,6 +145,9 @@ CREATE TABLE `t_stack_tools` (
   KEY `f_detail_id` (`detail_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+ALTER TABLE `stock`.`t_stock_tools` 
+ADD UNIQUE INDEX `search` (`stock_code` ASC, `date` ASC);
+
 
 CREATE TABLE `t_strategy` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -179,6 +182,10 @@ CREATE TABLE `t_strategy` (
     ON UPDATE NO ACTION);
 ALTER TABLE `stock`.`t_strategy` 
 ADD COLUMN `status` INT NOT NULL AFTER `strategy_comments`;
+
+ALTER TABLE `stock`.`t_strategy_tester` 
+ADD UNIQUE INDEX `search` (`stock_code` ASC, `date` ASC);
+
 
 ALTER TABLE `stock`.`t_strategy_tester` 
 ADD COLUMN `v1` VARCHAR(45) NULL AFTER `strength_360`,

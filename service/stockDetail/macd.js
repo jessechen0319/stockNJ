@@ -6,6 +6,7 @@ var UTIL = require('../Util');
 
 function macdDifStrong1(stockCode, callBack) {
     MySqlService.query('select * from t_stock_tools t where t.stock_code=? order by t.date desc limit 3',[stockCode] ,function (error, results, fields){
+        
         if(results&&results.length==3){
             var lastRecordDate = results[0]['date'];
             var today = UTIL.generateCurrentDate();
@@ -43,6 +44,8 @@ function macdDifStrong1(stockCode, callBack) {
             } else {
                 callBack();
             }
+        } else {
+            callBack();
         };
     });
 }
