@@ -11,7 +11,7 @@ function macdDifStrong1(stockCode, callBack) {
             var today = UTIL.generateCurrentDate();
             today = new Date(today);
             if(UTIL.generateMySqlDate(today)!=UTIL.generateMySqlDate(lastRecordDate)){
-                logger.info(`${today} not equals ${lastRecordDate}`);
+                logger.info(`${UTIL.generateMySqlDate(today)} not equals ${UTIL.generateMySqlDate(lastRecordDate)}`);
                 callBack();
                 return;
             }
