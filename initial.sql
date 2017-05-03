@@ -184,7 +184,8 @@ ALTER TABLE `stock`.`t_strategy`
 ADD COLUMN `status` INT NOT NULL AFTER `strategy_comments`;
 
 ALTER TABLE `stock`.`t_strategy_tester` 
-ADD UNIQUE INDEX `search` (`stock_code` ASC, `date` ASC);
+ADD UNIQUE INDEX `search` (`stock_code` ASC, `date` ASC, `strategy_id` ASC);
+
 
 
 ALTER TABLE `stock`.`t_strategy_tester` 
