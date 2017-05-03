@@ -43,6 +43,8 @@ function macdDifStrong1(stockCode, callBack) {
                             }
                             callBack();
                         });
+                    }else {
+                        callBack();
                     }
                 });
             } else {
