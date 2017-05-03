@@ -12,16 +12,16 @@ var Util = (function(){
 		return result;
 	}
 
-	function getPriceOfDay(stockCode, date, callback){
+	function getPriceOfDay(stockCode, dates, callback){
 		MySqlService.query(`
 			select * from t_stock_detail t where t.stock_code = ?
-			and t.date = ?
-		`, [stockCode, date], function(error, results, fields){
+			and t.date in (?) order by t.date desc
+		`, [stockCode, dates], function(error, results, fields){
 			if(error){
 				callback(0);
 			}
 			if(results && results.length>0){
-				callback(results[0].price);
+				callback(results);
 			}else {
 				callback(0);
 			}
