@@ -36,7 +36,7 @@ function macdDifStrong1(stockCode, callBack) {
                     insertParam.push(results[0].date);
                     insertParam.push(value1);
                     if(priceObjects.length==3&&priceObjects[0].amount_stock>priceObjects[1].amount_stock&&priceObjects[0].amount_stock>priceObjects[2].amount_stock){
-                        logger.info(`${stockCode} -> macd dif is good! with price -> ${priceObject[0].price}`);
+                        logger.info(`${stockCode} -> macd dif is good! with price -> ${priceObjects[0].price}`);
                         MySqlService.query('INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date, v1) VALUES (?, ?, ?, ?, ?)', insertParam, function(err){
                             if(err){
                                 logger.info(err);
