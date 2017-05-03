@@ -1,0 +1,1 @@
+select t.strategy_id,  m.strategy_name , sum(t.price_5) from t_strategy_tester t , t_strategy m where t.strategy_id = m.id group by t.strategy_id;
