@@ -42,6 +42,7 @@ function macdGold1(callBack){
                 insertParam.push(todayDate);
                 parameters.push(insertParam);
             });
+            logger.info(JSON.stringify(insertParam));
             MySqlService.query(`INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date) VALUES ?`, [parameters], (err)=>{
                 if(err){
                     logger.info(err);
