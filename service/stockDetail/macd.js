@@ -12,7 +12,7 @@ function macdGold1(callBack){
     var lastWorkDay = UTIL.getPreviousWorkDay(todayDate);
     todayDate = UTIL.generateMySqlDate(todayDate);
     lastWorkDay = UTIL.generateMySqlDate(lastWorkDay);
-
+    logger.info(`today->${todayDate}, last day->${lastWorkDay}`);
     MySqlService.query(`
         SELECT 
             d.stock_code, d.price
