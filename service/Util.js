@@ -12,6 +12,24 @@ var Util = (function(){
 		return result;
 	}
 
+	function isTodaysRecord(stockCode, callback){
+		MySqlService.query(`select * from t_stock_detail t where t.stock_code = ?
+		order by t.date desc limit 1`, [stockCode], function(error, results, fields){
+			if(results && results.length == 1){
+				 var lastRecordDate = results[0]['date'];
+				var today = UTIL.generateCurrentDate();
+				today = new Date(today);
+				if(today.getFullYear() != lastRecordDate.getFullYear() || today.getMonth() != lastRecordDate.getMonth() || today.getDate() != lastRecordDate.getDate()){
+					callback(false);
+				} else {
+					callback(true);
+				}
+			} else {
+				callback(false);
+			}
+		});
+	}
+
 	function getPriceOfDay(stockCode, dates, callback){
 		MySqlService.query(`
 			select * from t_stock_detail t where t.stock_code = ?
@@ -110,7 +128,8 @@ var Util = (function(){
 			"generateCurrentDate":generateCurrentDate,
 			"removeDir":removeDir,
 			"isStockTopOrLow":isStockTopOrLow,
-			"getPriceOfDay": getPriceOfDay
+			"getPriceOfDay": getPriceOfDay,
+			"isTodaysRecord":isTodaysRecord
 			};
 })();
 

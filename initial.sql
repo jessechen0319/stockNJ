@@ -196,4 +196,5 @@ ADD COLUMN `v3` VARCHAR(45) NULL AFTER `v2`;
 
 INSERT INTO `stock`.`t_strategy` (`strategy_name`, `strategy_comments`, `status`) VALUES ('shrunk_1', '取60天数据，最近5天的成交量是平均成交量的1/3， 是头5天成交量的1/8', '1');
 INSERT INTO `stock`.`t_strategy` (`strategy_name`, `strategy_comments`, `status`) VALUES ('macd_1', '取三天的数据，中间那一天是最小的值，', '2');
+INSERT INTO `stock`.`t_strategy` (`strategy_name`, `strategy_comments`, `status`) VALUES ('macd_2_gold', 'MACD 金叉', '3');
 INSERT INTO `stock`.`t_job_type` (`type_id`, `type_desc`) VALUES ('3', 'strategy daily fetch');

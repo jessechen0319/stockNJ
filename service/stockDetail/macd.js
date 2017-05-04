@@ -4,6 +4,80 @@ var jsonfile = require('jsonfile');
 var logger = require('../LogService');
 var UTIL = require('../Util');
 
+function macdGold1(stockCode, callBack){
+
+    UTIL.isTodaysRecord(stockCode, (isTodayRecord)=>{
+        var todayDate = UTIL.generateCurrentDate();
+        todayDate = new Date(todayDate);
+        todayDate = UTIL.generateMySqlDate(todayDate);
+        if(isTodayRecord){
+            MySqlService.query(`
+                SELECT 
+                    *
+                FROM
+                    t_stock_tools m
+                WHERE
+                    m.date < ?
+                    and m.stock_code = ?
+                ORDER BY m.date DESC
+                LIMIT 1
+            `,[todayDate, stockCode] ,function (error, results, fields){
+                if(error){
+                    logger.error(error);
+                }
+                if(results && results.length == 1 && results[0].macd_dif<results[0].macd_dea) {
+                    MySqlService.query(`
+                        SELECT 
+                            m.macd_dif, m.macd_dea, t.price
+                        FROM
+                            t_stock_tools m,
+                            t_stock_detail t
+                        WHERE
+                            m.date = ?
+                            and m.stock_code = ?
+                            and t.date = m.date
+                            and t.stock_code = m.stock_code
+                            and m.macd_dif > m.macd_dea
+                        ORDER BY m.date DESC
+                        LIMIT 1
+                    `, [todayDate, stockCode] , (error, results2, fields)=>{
+                        if(results2&&results2.length>0){
+
+                            var value1 = 0;
+                            if (results2[0].macd_dea != results[0].macd_dea) {
+                                let value2 =  results2[0].macd_dea - results[0].macd_dea;
+                                value1 = results2[0].macd_dif - results[0].macd_dif;
+                                value1 = value1/value2;
+                            }
+
+                            let insertParam = [];
+                            insertParam.push(3);
+                            insertParam.push(stockCode);
+                            insertParam.push(results2[0].price);
+                            insertParam.push(todayDate);
+                            insertParam.push(value1);
+                            MySqlService.query('INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date, v1) VALUES (?, ?, ?, ?, ?)', insertParam, function(err){
+                                if(err){
+                                    logger.info(err);
+                                }
+                                callBack();
+                            });
+                        } else {
+                            callBack();
+                        }
+                    });
+                } else {
+                    callBack();
+                }
+            });
+        } else {
+            callBack();
+        }
+    });
+
+    
+}
+
 function macdDifStrong1(stockCode, callBack) {
     MySqlService.query('select * from t_stock_tools t where t.stock_code=? order by t.date desc limit 3',[stockCode] ,function (error, results, fields){
         
@@ -62,7 +136,9 @@ function macdDifStrong1(stockCode, callBack) {
 }
 
 function init(stockCode, callBack){
-    macdDifStrong1(stockCode, callBack);
+    macdDifStrong1(stockCode, ()=>{
+        macdGold1(stockCode, callBack);
+    });
 }
 
 function macd(callBack){
