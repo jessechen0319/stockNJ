@@ -17,7 +17,7 @@ var Util = (function(){
 		order by t.date desc limit 1`, [stockCode], function(error, results, fields){
 			if(results && results.length == 1){
 				 var lastRecordDate = results[0]['date'];
-				var today = UTIL.generateCurrentDate();
+				var today = generateCurrentDate();
 				today = new Date(today);
 				if(today.getFullYear() != lastRecordDate.getFullYear() || today.getMonth() != lastRecordDate.getMonth() || today.getDate() != lastRecordDate.getDate()){
 					callback(false);
