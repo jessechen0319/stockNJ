@@ -9,9 +9,7 @@ function macdGold1(callBack){
 
     var todayDate = UTIL.generateCurrentDate();
     todayDate = new Date(todayDate);
-    var lastWorkDay = UTIL.getPreviousWorkDay(todayDate);
-    todayDate = UTIL.generateMySqlDate(todayDate);
-    lastWorkDay = UTIL.generateMySqlDate(lastWorkDay);
+    var lastWorkDay = new Date(UTIL.getPreviousWorkDay(todayDate));
     logger.info(`today->${todayDate}, last day->${lastWorkDay}`);
     MySqlService.query(`
         SELECT 

@@ -3,6 +3,14 @@ var fs = require('fs');
 var MySqlService = require("./MySqlService");
 var Util = (function(){
 
+	function dateToString(date){
+		var now = new Date();
+		let year = now.getFullYear();
+		let month = now.getMonth()+1;
+		let day = now.getDate();
+		let result = `${year}-${month}-${day}`;
+	}
+
 	function yesterday(today){
 		var yesterday_milliseconds=today.getTime()-1000*60*60*24;
 		var yesterday = new Date(yesterday_milliseconds);
@@ -16,7 +24,7 @@ var Util = (function(){
 			previousWorkDay = yesterday(previousWorkDay);
 			previousWorkDay = yesterday(previousWorkDay);
 		}
-		return previousWorkDay;
+		return dateToString(previousWorkDay);
 	}
 
 	function generateCurrentDate(){
@@ -146,7 +154,8 @@ var Util = (function(){
 			"isStockTopOrLow":isStockTopOrLow,
 			"getPriceOfDay": getPriceOfDay,
 			"isTodaysRecord":isTodaysRecord,
-			"getPreviousWorkDay": getPreviousWorkDay
+			"getPreviousWorkDay": getPreviousWorkDay,
+			"dateToString": dateToString
 			};
 })();
 
