@@ -25,7 +25,7 @@ function macdGold1(stockCode, callBack){
                 if(error){
                     logger.error(error);
                 }
-                if(results && results.length == 1 && results[0].macd_dif<results[0].macd_dea) {
+                if(results && results.length == 1 && results[0].macd_dif<=results[0].macd_dea) {
                     MySqlService.query(`
                         SELECT 
                             m.macd_dif, m.macd_dea, t.price
