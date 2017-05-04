@@ -4,16 +4,68 @@ var jsonfile = require('jsonfile');
 var logger = require('../LogService');
 var UTIL = require('../Util');
 
-function macdGold1(stockCode, callBack){
+function macdGold1(callBack){
 
+
+    var todayDate = UTIL.generateCurrentDate();
+    todayDate = new Date(todayDate);
+    var lastWorkDay = UTIL.getPreviousWorkDay(todayDate);
+    todayDate = UTIL.generateMySqlDate(todayDate);
+    lastWorkDay = UTIL.generateMySqlDate(lastWorkDay);
+
+    MySqlService.query(`
+        SELECT 
+            d.stock_code, d.price
+        FROM
+            t_stock_tools t, t_stock_detail d
+        WHERE
+        t.macd_bar > 0
+                AND t.date = ?
+                and t.date = d.date
+                and t.stock_code = d.stock_code
+                AND EXISTS( SELECT 
+                    1
+                FROM
+                    t_stock_tools m
+                WHERE
+                    t.stock_code = m.stock_code
+                        AND m.date = ?
+                        AND m.macd_bar <= 0)
+    `, [todayDate, lastWorkDay], (error, results, fields)=>{
+        if(results && results.length > 1){
+            var parameters = [];
+            results.forEach(function(record, index){
+                let insertParam = [];
+                insertParam.push(3);
+                insertParam.push(record.stock_code);
+                insertParam.push(record.price);
+                insertParam.push(todayDate);
+                parameters.push(insertParam);
+            });
+            MySqlService.query(`INSERT INTO t_strategy_tester (strategy_id, stock_code, price, date) VALUES ?`, [parameters], (err)=>{
+                if(err){
+                    logger.info(err);
+                }
+                callBack();
+            });
+
+        } else {
+            callBack();
+        }
+    });
+/*
     UTIL.isTodaysRecord(stockCode, (isTodayRecord)=>{
         var todayDate = UTIL.generateCurrentDate();
         todayDate = new Date(todayDate);
         todayDate = UTIL.generateMySqlDate(todayDate);
         if(isTodayRecord){
+            logger.info(`${stockCode} -> has today record`);
+            var lastWorkDay = UTIL.getPreviousWorkDay();
+
+            
             MySqlService.query(`
                 SELECT 
-                    *
+                    m.date
                 FROM
                     t_stock_tools m
                 WHERE
@@ -26,6 +78,7 @@ function macdGold1(stockCode, callBack){
                     logger.error(error);
                 }
                 if(results && results.length == 1 && results[0].macd_dif<=results[0].macd_dea) {
+                    
                     MySqlService.query(`
                         SELECT 
                             m.macd_dif, m.macd_dea, t.price
@@ -66,15 +119,17 @@ function macdGold1(stockCode, callBack){
                             callBack();
                         }
                     });
+                    
                 } else {
                     callBack();
                 }
             });
+            
         } else {
             callBack();
         }
     });
-
+*/
     
 }
 
@@ -136,9 +191,7 @@ function macdDifStrong1(stockCode, callBack) {
 }
 
 function init(stockCode, callBack){
-    macdDifStrong1(stockCode, ()=>{
-        macdGold1(stockCode, callBack);
-    });
+    macdDifStrong1(stockCode, callBack);
 }
 
 function macd(callBack){
@@ -154,7 +207,7 @@ function macd(callBack){
             logger.info(`macd process ${stock.code}, remind -> ${stocks.length}`);
             jsonfile.writeFileSync(__dirname+"//macd.json", stocks);
             if(stocks.length == 0){
-                callBack();
+                macdGold1(callBack);
                 logger.info('finished process-------');
             } else {
                 init(stock.code, function(){

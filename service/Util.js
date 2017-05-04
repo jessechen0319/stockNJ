@@ -3,6 +3,22 @@ var fs = require('fs');
 var MySqlService = require("./MySqlService");
 var Util = (function(){
 
+	function yesterday(today){
+		var yesterday_milliseconds=today.getTime()-1000*60*60*24;
+		var yesterday = new Date(yesterday_milliseconds);
+		return yesterday;
+	}
+
+	function getPreviousWorkDay(){
+		var now = new Date();
+		var previousWorkDay = yesterday(now);
+		if (now.getDay() == 1){
+			previousWorkDay = yesterday(previousWorkDay);
+			previousWorkDay = yesterday(previousWorkDay);
+		}
+		return previousWorkDay;
+	}
+
 	function generateCurrentDate(){
 		var now = new Date();
 		let year = now.getFullYear();
@@ -129,7 +145,8 @@ var Util = (function(){
 			"removeDir":removeDir,
 			"isStockTopOrLow":isStockTopOrLow,
 			"getPriceOfDay": getPriceOfDay,
-			"isTodaysRecord":isTodaysRecord
+			"isTodaysRecord":isTodaysRecord,
+			"getPreviousWorkDay": getPreviousWorkDay
 			};
 })();
 
