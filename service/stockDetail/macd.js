@@ -32,6 +32,7 @@ function macdGold1(callBack){
                         AND m.date = ?
                         AND m.macd_bar <= 0)
     `, [todayDate, lastWorkDay], (error, results, fields)=>{
+        logger.info(JSON.stringify(results));
         if(results && results.length > 1){
             var parameters = [];
             results.forEach(function(record, index){
